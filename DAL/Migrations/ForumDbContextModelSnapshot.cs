@@ -146,12 +146,6 @@ namespace Data.Migrations
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("CommunityId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("CommunityId1")
-                        .HasColumnType("int");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -171,6 +165,9 @@ namespace Data.Migrations
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<int?>("ModeratedCommunityId")
+                        .HasColumnType("int");
 
                     b.Property<string>("NormalizedEmail")
                         .HasColumnType("nvarchar(256)")
@@ -201,9 +198,7 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CommunityId");
-
-                    b.HasIndex("CommunityId1");
+                    b.HasIndex("ModeratedCommunityId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
@@ -214,6 +209,28 @@ namespace Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+                });
+
+            modelBuilder.Entity("Data.Models.UserCommunity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CommunityId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommunityId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserCommunities");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
@@ -391,13 +408,24 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Data.Models.User", b =>
                 {
-                    b.HasOne("Data.Models.Community", null)
-                        .WithMany("Members")
-                        .HasForeignKey("CommunityId");
-
-                    b.HasOne("Data.Models.Community", null)
+                    b.HasOne("Data.Models.Community", "ModeratedCommunity")
                         .WithMany("Moderators")
-                        .HasForeignKey("CommunityId1");
+                        .HasForeignKey("ModeratedCommunityId");
+                });
+
+            modelBuilder.Entity("Data.Models.UserCommunity", b =>
+                {
+                    b.HasOne("Data.Models.Community", "Community")
+                        .WithMany("Members")
+                        .HasForeignKey("CommunityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Models.User", "User")
+                        .WithMany("Communities")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

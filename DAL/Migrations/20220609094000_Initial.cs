@@ -80,21 +80,14 @@ namespace Data.Migrations
                     AccessFailedCount = table.Column<int>(nullable: false),
                     BirthDate = table.Column<DateTime>(nullable: false),
                     Karma = table.Column<int>(nullable: false),
-                    CommunityId = table.Column<int>(nullable: true),
-                    CommunityId1 = table.Column<int>(nullable: true)
+                    ModeratedCommunityId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetUsers_Communities_CommunityId",
-                        column: x => x.CommunityId,
-                        principalTable: "Communities",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_AspNetUsers_Communities_CommunityId1",
-                        column: x => x.CommunityId1,
+                        name: "FK_AspNetUsers_Communities_ModeratedCommunityId",
+                        column: x => x.ModeratedCommunityId,
                         principalTable: "Communities",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -238,6 +231,32 @@ namespace Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserCommunities",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(nullable: false),
+                    CommunityId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserCommunities", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserCommunities_Communities_CommunityId",
+                        column: x => x.CommunityId,
+                        principalTable: "Communities",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserCommunities_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Comments",
                 columns: table => new
                 {
@@ -269,7 +288,7 @@ namespace Data.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -300,14 +319,9 @@ namespace Data.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_CommunityId",
+                name: "IX_AspNetUsers_ModeratedCommunityId",
                 table: "AspNetUsers",
-                column: "CommunityId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_CommunityId1",
-                table: "AspNetUsers",
-                column: "CommunityId1");
+                column: "ModeratedCommunityId");
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
@@ -350,6 +364,16 @@ namespace Data.Migrations
                 name: "IX_Topics_UserId",
                 table: "Topics",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserCommunities_CommunityId",
+                table: "UserCommunities",
+                column: "CommunityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserCommunities_UserId",
+                table: "UserCommunities",
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -374,6 +398,9 @@ namespace Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Rules");
+
+            migrationBuilder.DropTable(
+                name: "UserCommunities");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
