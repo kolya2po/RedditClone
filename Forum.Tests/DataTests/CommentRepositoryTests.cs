@@ -55,7 +55,7 @@ namespace Forum.Tests.DataTests
             var newComment = new Comment
             {
                 Id = 5,
-                UserId = 2
+                AuthorId = 2
             };
 
             // Act
@@ -117,7 +117,7 @@ namespace Forum.Tests.DataTests
                 Id = id,
                 Rating = 20,
                 Text = $"Comment{id} New Text",
-                UserId = 1,
+                AuthorId = 1,
                 TopicId = 1
             };
 
@@ -147,13 +147,11 @@ namespace Forum.Tests.DataTests
             comments.Should().BeEquivalentTo(expectedComments, opt =>
             {
                 return opt.Excluding(c => c.Author)
-                    .Excluding(c => c.Replies)
                     .Excluding(c => c.Topic);
             });
             comments.Select(c => c.Author).Should().NotBeNull();
             comments.Select(c => c.Topic).Should().NotBeNull();
             comments.Select(c => c.Topic.Community).Should().NotBeNull();
-            comments.Select(c => c.Replies).Should().NotBeNull();
             await dbContext.Database.EnsureDeletedAsync();
         }
 
@@ -174,13 +172,11 @@ namespace Forum.Tests.DataTests
             comment.Should().BeEquivalentTo(expectedComment, opt =>
             {
                 return opt.Excluding(c => c.Author)
-                    .Excluding(c => c.Replies)
                     .Excluding(c => c.Topic);
             });
             comment.Author.Should().NotBeNull();
             comment.Topic.Should().NotBeNull();
             comment.Topic.Community.Should().NotBeNull();
-            comment.Replies.Should().NotBeNull();
             await dbContext.Database.EnsureDeletedAsync();
         }
     }

@@ -12,6 +12,10 @@ namespace Data.ModelsDbConfiguration
                 .WithOne(r => r.Community)
                 .HasForeignKey(r => r.CommunityId);
 
+            builder.HasOne(c => c.Creator)
+                .WithOne(u => u.CreatedCommunity)
+                .HasForeignKey<User>(u => u.CreatedCommunityId);
+
             builder.HasMany(c => c.Moderators)
                 .WithOne(u => u.ModeratedCommunity)
                 .HasForeignKey(u => u.ModeratedCommunityId);

@@ -8,6 +8,7 @@ namespace Data.Interfaces
         public ICommunityRepository CommunityRepository { get; }
         public IRuleRepository RuleRepository { get; }
         public ITopicRepository TopicRepository { get; }
+        public IUserCommunityRepository UserCommunityRepository { get; }
         Task SaveAsync();
     }
 }

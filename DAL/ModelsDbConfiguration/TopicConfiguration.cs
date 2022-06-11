@@ -10,7 +10,7 @@ namespace Data.ModelsDbConfiguration
         {
             builder.HasOne(t => t.Author)
                 .WithMany(a => a.Posts)
-                .HasForeignKey(t => t.UserId);
+                .HasForeignKey(t => t.AuthorId);
 
             builder.HasOne(t => t.Community)
                 .WithMany(c => c.Posts)

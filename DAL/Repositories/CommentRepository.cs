@@ -58,7 +58,6 @@ namespace Data.Repositories
         public async Task<IEnumerable<Comment>> GetAllWithDetailsAsync()
         {
             return await DbContext.Comments
-                .Include(c => c.Replies)
                 .Include(c => c.Author)
                 .Include(c => c.Topic)
                 .ThenInclude(t => t.Community)
@@ -69,7 +68,6 @@ namespace Data.Repositories
         public async Task<Comment> GetByIdWithDetailsAsync(int id)
         {
             return await DbContext.Comments
-                .Include(c => c.Replies)
                 .Include(c => c.Author)
                 .Include(c => c.Topic)
                 .ThenInclude(t => t.Community)

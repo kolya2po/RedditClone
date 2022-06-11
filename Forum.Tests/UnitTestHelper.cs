@@ -1,8 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using AutoMapper;
+using Business;
 using Data;
 using Data.Models;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Moq;
 
 namespace Forum.Tests
 {
@@ -21,6 +29,38 @@ namespace Forum.Tests
             return options;
         }
 
+        public static IMapper CreateMapperFromProfile()
+        {
+            var autoMapperProfile = new AutoMapperProfile();
+            var config = new MapperConfiguration(cfg => cfg.AddProfile(autoMapperProfile));
+
+            return new Mapper(config);
+        }
+
+        public static Mock<UserManager<User>> GetMockUserManager()
+        {
+            var store = new Mock<IUserStore<User>>();
+            var mgr = new Mock<UserManager<User>>(store.Object, null, null, null, null, null, null, null, null);
+            mgr.Object.UserValidators.Add(new UserValidator<User>());
+            mgr.Object.PasswordValidators.Add(new PasswordValidator<User>());
+            return mgr;
+        }
+        public static Mock<SignInManager<User>> GetMockSignInManager()
+        {
+            var userManagerMock = new Mock<UserManager<User>>(
+                Mock.Of<IUserStore<User>>(), null, null, null, null, null, null, null, null);
+
+            var signInManagerMock = new Mock<SignInManager<User>>(
+                userManagerMock.Object,
+                 new Mock<IHttpContextAccessor>().Object,
+                 new Mock<IUserClaimsPrincipalFactory<User>>().Object,
+                 new Mock<IOptions<IdentityOptions>>().Object,
+                 new Mock<ILogger<SignInManager<User>>>().Object,
+                 new Mock<IAuthenticationSchemeProvider>().Object);
+
+            return signInManagerMock;
+        }
+
         private static void SeedData(ForumDbContext context)
         {
             context.Comments.AddRange(GetTestComments());
@@ -32,7 +72,6 @@ namespace Forum.Tests
             context.SaveChanges();
         }
 
-
         public static IEnumerable<Comment> GetTestComments() =>
             new[]
             {
@@ -41,7 +80,7 @@ namespace Forum.Tests
                     Id = 1,
                     Rating = 1,
                     Text = "Comment1 Text",
-                    UserId = 1,
+                    AuthorId = 1,
                     TopicId = 1
                 },
                 new Comment
@@ -49,7 +88,7 @@ namespace Forum.Tests
                     Id = 2,
                     Rating = 22,
                     Text = "Comment2 Text",
-                    UserId = 2,
+                    AuthorId = 2,
                     TopicId = 1
                 },
                 new Comment
@@ -57,7 +96,7 @@ namespace Forum.Tests
                     Id = 3,
                     Rating = -5,
                     Text = "Comment3 Text",
-                    UserId = 3,
+                    AuthorId = 3,
                     TopicId = 1
                 },
                 new Comment
@@ -65,7 +104,7 @@ namespace Forum.Tests
                     Id = 4,
                     Rating = 4,
                     Text = "Comment4 Text",
-                    UserId = 4,
+                    AuthorId = 4,
                     TopicId = 1
                 }
             };
@@ -78,21 +117,24 @@ namespace Forum.Tests
                     Id = 1,
                     Title = "Community 1",
                     About = "About community 1",
-                    CreationDate = new DateTime(2022, 1, 16)
+                    CreationDate = new DateTime(2022, 1, 16),
+                    CreatorId = 1
                 },
                 new Community
                 {
                     Id = 2,
                     Title = "Community 2",
                     About = "About community 2",
-                    CreationDate = new DateTime(2022, 1, 18)
+                    CreationDate = new DateTime(2022, 1, 18),
+                    CreatorId = 2
                 },
                 new Community
                 {
                     Id = 3,
                     Title = "Community 3",
                     About = "About community 3",
-                    CreationDate = new DateTime(2022, 3, 16)
+                    CreationDate = new DateTime(2022, 3, 16),
+                    CreatorId = 3
                 }
             };
 
@@ -135,7 +177,7 @@ namespace Forum.Tests
                 new Topic
                 {
                     Id = 1,
-                    UserId = 1,
+                    AuthorId = 1,
                     CommunityId = 1,
                     Title = "Topic 1",
                     Text = "Text topic 1",
@@ -144,7 +186,7 @@ namespace Forum.Tests
                 new Topic
                 {
                     Id = 2,
-                    UserId = 2,
+                    AuthorId = 2,
                     CommunityId = 1,
                     Title = "Topic 2",
                     Text = "Text topic 2",
@@ -153,7 +195,7 @@ namespace Forum.Tests
                 new Topic
                 {
                     Id = 3,
-                    UserId = 3,
+                    AuthorId = 3,
                     CommunityId = 2,
                     Title = "Topic 3",
                     Text = "Text topic 3",
@@ -162,7 +204,7 @@ namespace Forum.Tests
                 new Topic
                 {
                     Id = 4,
-                    UserId = 4,
+                    AuthorId = 4,
                     CommunityId = 2,
                     Title = "Topic 4",
                     Text = "Text topic 4",
@@ -177,18 +219,21 @@ namespace Forum.Tests
                 {
                     Id = 1,
                     UserName = "Name 1",
-                    ModeratedCommunityId = 1
+                    ModeratedCommunityId = 1,
+                    CreatedCommunityId = 1
                 },
                 new User
                 {
                     Id = 2,
-                    UserName = "Name 2"
+                    UserName = "Name 2",
+                    CreatedCommunityId = 2
                 },
                 new User
                 {
                     Id = 3,
                     UserName = "Name 3",
-                    ModeratedCommunityId = 2
+                    ModeratedCommunityId = 2,
+                    CreatedCommunityId = 3
                 },
                 new User
                 {
@@ -202,21 +247,25 @@ namespace Forum.Tests
             {
                 new UserCommunity
                 {
+                    Id = 1,
                     CommunityId = 1,
                     UserId = 1
                 },
                 new UserCommunity
                 {
+                    Id = 2,
                     CommunityId = 1,
                     UserId = 2
                 },
                 new UserCommunity
                 {
+                    Id = 3,
                     CommunityId = 2,
                     UserId = 3
                 },
                 new UserCommunity
                 {
+                    Id = 4,
                     CommunityId = 2,
                     UserId = 4
                 }

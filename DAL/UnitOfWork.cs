@@ -11,6 +11,7 @@ namespace Data
         private CommunityRepository _communityRepository;
         private RuleRepository _ruleRepository;
         private TopicRepository _topicRepository;
+        private UserCommunityRepository _userCommunityRepository;
         public UnitOfWork(ForumDbContext context)
         {
             _context = context;
@@ -28,6 +29,9 @@ namespace Data
         /// <inheritdoc />
         public ITopicRepository TopicRepository => _topicRepository ??= new TopicRepository(_context);
 
+        /// <inheritdoc />
+        public IUserCommunityRepository UserCommunityRepository =>
+            _userCommunityRepository ??= new UserCommunityRepository(_context);
 
         /// <inheritdoc />
         public async Task SaveAsync()

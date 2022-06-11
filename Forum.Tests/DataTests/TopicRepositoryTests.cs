@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Data;
 using Data.Models;
@@ -38,10 +39,10 @@ namespace Forum.Tests.DataTests
                 .FirstOrDefault(c => c.Id == id);
 
             // Act
-            var actualComment = await topicRepository.GetByIdAsync(id);
+            var actualTopic = await topicRepository.GetByIdAsync(id);
 
             // Assert
-            actualComment.Should().BeEquivalentTo(expectedTopic);
+            actualTopic.Should().BeEquivalentTo(expectedTopic);
             await dbContext.Database.EnsureDeletedAsync();
         }
 
@@ -55,7 +56,7 @@ namespace Forum.Tests.DataTests
             var newTopic = new Topic
             {
                 Id = 5,
-                UserId = 2
+                AuthorId = 2
             };
 
             // Act
@@ -108,17 +109,18 @@ namespace Forum.Tests.DataTests
         {
             // Arrange
             await using var dbContext = new ForumDbContext(UnitTestHelper.GetDbContextOptions());
-            var topicRepository = new CommentRepository(dbContext);
+            var topicRepository = new TopicRepository(dbContext);
 
             var oldTopic = UnitTestHelper.GetTestTopics()
                 .FirstOrDefault(c => c.Id == id);
-            var newTopic = new Comment
+            var newTopic = new Topic
             {
                 Id = id,
-                Rating = 20,
-                Text = $"Comment{id} New Text",
-                UserId = 1,
-                TopicId = 1
+                AuthorId = 1,
+                CommunityId = 1,
+                Title = $"New Topic {id}",
+                Text = $"New Text topic {id}",
+                PostingDate = new DateTime(2022, 2, 22)
             };
 
             // Act

@@ -9,6 +9,9 @@ namespace Data.Models
         public DateTime BirthDate { get; set; }
         public int Karma { get; set; }
 
+        public int? CreatedCommunityId { get; set; }
+        public Community CreatedCommunity { get; set; }
+
         public int? ModeratedCommunityId { get; set; }
         public Community ModeratedCommunity { get; set; }
 

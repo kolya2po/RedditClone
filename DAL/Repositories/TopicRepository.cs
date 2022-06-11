@@ -59,6 +59,7 @@ namespace Data.Repositories
         {
             return await DbContext.Topics
                 .Include(t => t.Comments)
+                .ThenInclude(c => c.Author)
                 .Include(t => t.Author)
                 .Include(t => t.Community)
                 .ToListAsync();
@@ -69,8 +70,10 @@ namespace Data.Repositories
         {
             return await DbContext.Topics
                 .Include(t => t.Comments)
+                .ThenInclude(c => c.Author)
                 .Include(t => t.Author)
                 .Include(t => t.Community)
+                .ThenInclude(c => c.Members)
                 .FirstOrDefaultAsync(t => t.Id == id);
         }
     }

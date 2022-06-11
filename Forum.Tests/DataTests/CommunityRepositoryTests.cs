@@ -150,7 +150,8 @@ namespace Forum.Tests.DataTests
                 return opt.Excluding(c => c.Members)
                     .Excluding(c => c.Moderators)
                     .Excluding(c => c.Posts)
-                    .Excluding(c => c.Rules);
+                    .Excluding(c => c.Rules)
+                    .Excluding(c => c.Creator);
             });
             communities.Select(c => c.Rules).Should().NotBeNull();
             communities.Select(c => c.Posts).Should().NotBeNull();
@@ -158,6 +159,7 @@ namespace Forum.Tests.DataTests
             communities.SelectMany(c => c.Posts).Select(p => p.Comments).Should().NotBeNull();
             communities.Select(c => c.Members).Should().NotBeNull();
             communities.Select(c => c.Moderators).Should().NotBeNull();
+            communities.Select(c => c.Creator).Should().NotBeNull();
             await dbContext.Database.EnsureDeletedAsync();
         }
 
@@ -180,7 +182,8 @@ namespace Forum.Tests.DataTests
                 return opt.Excluding(c => c.Members)
                     .Excluding(c => c.Moderators)
                     .Excluding(c => c.Posts)
-                    .Excluding(c => c.Rules);
+                    .Excluding(c => c.Rules)
+                    .Excluding(c => c.Creator);
             });
             community.Rules.Should().NotBeNull();
             community.Posts.Should().NotBeNull();

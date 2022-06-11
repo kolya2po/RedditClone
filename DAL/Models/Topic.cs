@@ -8,12 +8,12 @@ namespace Data.Models
         public string Title { get; set; }
         public string Text { get; set; }
         public bool IsPinned { get; set; }
-
+        public bool CommentsAreBlocked { get; set; }
         public IEnumerable<Comment> Comments { get; set; } = new List<Comment>();
         public int Rating { get; set; }
         public DateTime PostingDate { get; set; }
 
-        public int UserId { get; set; }
+        public int AuthorId { get; set; }
         public User Author { get; set; }
 
         public int CommunityId { get; set; }

@@ -10,7 +10,7 @@ namespace Data.ModelsDbConfiguration
         {
             builder.HasOne(c => c.Author)
                 .WithMany(a => a.Comments)
-                .HasForeignKey(c => c.UserId);
+                .HasForeignKey(c => c.AuthorId);
         }
     }
 }

@@ -7,6 +7,10 @@ namespace Data.Models
     {
         public string Title { get; set; }
         public string About { get; set; }
+
+        public int CreatorId { get; set; }
+        public User Creator { get; set; }
+
         public IEnumerable<UserCommunity> Members { get; set; } = new List<UserCommunity>();
         public IEnumerable<Topic> Posts { get; set; } = new List<Topic>();
 

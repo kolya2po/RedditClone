@@ -306,12 +306,12 @@ namespace Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserClaims_UserId",
                 table: "AspNetUserClaims",
-                column: "UserId");
+                column: "AuthorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserLogins_UserId",
                 table: "AspNetUserLogins",
-                column: "UserId");
+                column: "AuthorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserRoles_RoleId",
@@ -348,7 +348,7 @@ namespace Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_UserId",
                 table: "Comments",
-                column: "UserId");
+                column: "AuthorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Rules_CommunityId",
@@ -363,7 +363,7 @@ namespace Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Topics_UserId",
                 table: "Topics",
-                column: "UserId");
+                column: "AuthorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserCommunities_CommunityId",
@@ -373,7 +373,7 @@ namespace Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_UserCommunities_UserId",
                 table: "UserCommunities",
-                column: "UserId");
+                column: "AuthorId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

@@ -58,6 +58,7 @@ namespace Data.Repositories
         public async Task<IEnumerable<Community>> GetAllWithDetailsAsync()
         {
             return await DbContext.Communities
+                .Include(c => c.Creator)
                 .Include(c => c.Rules)
                 .Include(c => c.Members)
                 .Include(c => c.Moderators)
@@ -69,6 +70,7 @@ namespace Data.Repositories
         public async Task<Community> GetByIdWithDetailsAsync(int id)
         {
             return await DbContext.Communities
+                .Include(c => c.Creator)
                 .Include(c => c.Rules)
                 .Include(c => c.Members)
                 .Include(c => c.Moderators)
