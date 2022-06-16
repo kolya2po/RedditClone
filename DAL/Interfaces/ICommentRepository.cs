@@ -1,12 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Data.Models;
+﻿using Data.Models;
 
 namespace Data.Interfaces
 {
-    public interface ICommentRepository : IRepository<Comment>
+    /// <inheritdoc cref="IRepository{Comment}"/>
+    /// <inheritdoc cref="IRepositoryExtended{Comment}"/>
+    public interface ICommentRepository : IRepository<Comment>, IRepositoryExtended<Comment>
     {
-        Task<IEnumerable<Comment>> GetAllWithDetailsAsync();
-        Task<Comment> GetByIdWithDetailsAsync(int id);
     }
 }

@@ -23,7 +23,7 @@ namespace Forum.Tests.BusinessTests
             mockUnitOfWork.Setup(u => u.TopicRepository.GetAllWithDetailsAsync())
                 .ReturnsAsync(UnitTestHelper.GetTestTopics);
             var expected = GetTestTopicModels();
-            var topicService = new TopicService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile(), null);
+            var topicService = new TopicService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile());
 
             // Act
             var actual = await topicService.GetAllAsync();
@@ -44,7 +44,7 @@ namespace Forum.Tests.BusinessTests
             var mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(u => u.TopicRepository.GetByIdWithDetailsAsync(1))
                 .ReturnsAsync(topic);
-            var topicService = new TopicService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile(), null);
+            var topicService = new TopicService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile());
 
             // Act
             var actual = await topicService.GetByIdAsync(1);
@@ -59,7 +59,7 @@ namespace Forum.Tests.BusinessTests
             // Arrange
             var mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(u => u.TopicRepository.AddAsync(It.IsAny<Topic>()));
-            var topicService = new TopicService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile(), null);
+            var topicService = new TopicService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile());
             var expected = GetTestTopicModels().First();
 
             // Act
@@ -76,7 +76,7 @@ namespace Forum.Tests.BusinessTests
             // Arrange
             var mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(u => u.TopicRepository.Update(It.IsAny<Topic>()));
-            var topicService = new TopicService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile(), null);
+            var topicService = new TopicService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile());
             var expected = GetTestTopicModels().First();
 
             // Act
@@ -93,7 +93,7 @@ namespace Forum.Tests.BusinessTests
             // Arrange
             var mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(u => u.TopicRepository.DeleteByIdAsync(1));
-            var topicService = new TopicService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile(), null);
+            var topicService = new TopicService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile());
 
             // Act
             await topicService.DeleteAsync(1);
@@ -110,7 +110,7 @@ namespace Forum.Tests.BusinessTests
             var mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(u => u.TopicRepository.GetByIdAsync(topicId))
                 .ReturnsAsync(GetTestTopic);
-            var topicService = new TopicService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile(), null);
+            var topicService = new TopicService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile());
             var expected = GetTestTopicModel;
             expected.CommentsAreBlocked = true;
 
@@ -122,53 +122,6 @@ namespace Forum.Tests.BusinessTests
             mockUnitOfWork.Verify(u => u.SaveAsync(), Times.Once);
         }
 
-        [TestCase(1)]
-        public async Task GetAllMadeByUserAsync_ReturnsTopicsMadeByUser(int userId)
-        {
-            // Arrange
-            var user = new User
-            {
-                Id = userId,
-                Posts = UnitTestHelper.GetTestTopics().Where(t => t.AuthorId == userId)
-            };
-
-            var mockUserManager = UnitTestHelper.GetMockUserManager();
-            mockUserManager.Setup(u => u.FindByIdAsync(userId.ToString()))
-                .ReturnsAsync(user);
-
-            var topicService = new TopicService(null, UnitTestHelper.CreateMapperFromProfile(), mockUserManager.Object);
-            var expected = GetTestTopicModels().Where(t => t.AuthorId == userId);
-
-            // Act
-            var topicModels = await topicService.GetAllMadeByUserAsync(userId);
-
-            // Assert
-            topicModels.Should().BeEquivalentTo(expected, opt =>
-            {
-                return opt.Excluding(c => c.CommentModels);
-            });
-        }
-
-        [Test]
-        public async Task GetByFilterAsync_ReturnsNewTopicsModels()
-        {
-            // Arrange
-            var mockUnitOfWork = new Mock<IUnitOfWork>();
-            mockUnitOfWork.Setup(u => u.TopicRepository.GetAllWithDetailsAsync())
-                .ReturnsAsync(UnitTestHelper.GetTestTopics);
-            var topicService = new TopicService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile(), null);
-            var expected = GetTestTopicModels().OrderBy(c => c.PostingDate);
-            var filterSearchModelModel = new FilterSearchModel { IsNew = true };
-
-            // Act
-            var actual = await topicService.GetByFilterAsync(filterSearchModelModel);
-
-            // Assert
-            expected.Should().BeEquivalentTo(actual, opt =>
-            {
-                return opt.Excluding(c => c.CommentModels);
-            });
-        }
         private static TopicModel GetTestTopicModel => new TopicModel
         {
 
@@ -177,7 +130,7 @@ namespace Forum.Tests.BusinessTests
             CommunityId = 1,
             Title = "Topic 1",
             Text = "Text topic 1",
-            PostingDate = new DateTime(2022, 1, 22),
+            PostingDate = new DateTime(2022, 1, 22).ToLongDateString(),
             AuthorName = "Author111",
             CommentModels = new []
             {
@@ -217,7 +170,7 @@ namespace Forum.Tests.BusinessTests
                     CommunityId = 1,
                     Title = "Topic 1",
                     Text = "Text topic 1",
-                    PostingDate = new DateTime(2022, 1, 22)
+                    PostingDate = new DateTime(2022, 1, 22).ToLongDateString()
                 },
                 new TopicModel
                 {
@@ -226,7 +179,7 @@ namespace Forum.Tests.BusinessTests
                     CommunityId = 1,
                     Title = "Topic 2",
                     Text = "Text topic 2",
-                    PostingDate = new DateTime(2022, 6, 4)
+                    PostingDate = new DateTime(2022, 6, 4).ToLongDateString()
                 },
                 new TopicModel
                 {
@@ -235,7 +188,7 @@ namespace Forum.Tests.BusinessTests
                     CommunityId = 2,
                     Title = "Topic 3",
                     Text = "Text topic 3",
-                    PostingDate = new DateTime(2022, 2, 16)
+                    PostingDate = new DateTime(2022, 2, 16).ToLongDateString()
                 },
                 new TopicModel
                 {
@@ -244,7 +197,7 @@ namespace Forum.Tests.BusinessTests
                     CommunityId = 2,
                     Title = "Topic 4",
                     Text = "Text topic 4",
-                    PostingDate = new DateTime(2021, 1, 16)
+                    PostingDate = new DateTime(2021, 1, 16).ToLongDateString()
                 }
             };
     }

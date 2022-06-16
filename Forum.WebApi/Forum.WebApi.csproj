@@ -6,13 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="ErrorHandling\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\BLL\Business.csproj" />
     <ProjectReference Include="..\DAL\Data.csproj" />
   </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 
 
 </Project>

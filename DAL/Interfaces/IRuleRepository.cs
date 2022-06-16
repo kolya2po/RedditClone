@@ -2,6 +2,7 @@
 
 namespace Data.Interfaces
 {
+    /// <inheritdoc cref="IRepository{Rule}"/>
     public interface IRuleRepository : IRepository<Rule>
     {
     }

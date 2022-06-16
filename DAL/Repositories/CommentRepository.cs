@@ -6,8 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repositories
 {
+    /// <summary>
+    /// Implements ICommentRepository interface.
+    /// </summary>
     public class CommentRepository : BaseRepository, ICommentRepository
-    { 
+    {
         /// <inheritdoc />
         public CommentRepository(ForumDbContext dbContext) : base(dbContext)
         {
@@ -28,6 +31,8 @@ namespace Data.Repositories
         /// <inheritdoc />
         public async Task AddAsync(Comment entity)
         {
+            entity.Author = null;
+            entity.Topic = null;
             await DbContext.Comments.AddAsync(entity);
         }
 
@@ -51,6 +56,8 @@ namespace Data.Repositories
         /// <inheritdoc />
         public void Update(Comment entity)
         {
+            entity.Author = null;
+            entity.Topic = null;
             DbContext.Comments.Update(entity);
         }
 

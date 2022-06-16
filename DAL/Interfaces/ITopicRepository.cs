@@ -1,13 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Data.Models;
+﻿using Data.Models;
 
 namespace Data.Interfaces
 {
-    public interface ITopicRepository : IRepository<Topic>
+    /// <inheritdoc cref="IRepository{Topic}"/>
+    /// <inheritdoc cref="IRepositoryExtended{Topic}"/>
+    public interface ITopicRepository : IRepository<Topic>, IRepositoryExtended<Topic>
     {
-        Task<IEnumerable<Topic>> GetAllWithDetailsAsync();
-
-        Task<Topic> GetByIdWithDetailsAsync(int id);
     }
 }

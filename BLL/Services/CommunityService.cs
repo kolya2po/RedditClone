@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Business.Interfaces;
 using Business.MapModels;
 using Business.Validation;
 using Data.Interfaces;
 using Data.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Business.Services
 {
@@ -35,29 +36,38 @@ namespace Business.Services
         public async Task<CommunityModel> GetByIdAsync(int id)
         {
             var community = await UnitOfWork.CommunityRepository.GetByIdWithDetailsAsync(id);
-
             return Mapper.Map<CommunityModel>(community);
         }
 
         /// <inheritdoc />
-        public async Task AddAsync(CommunityModel model)
+        public async Task<CommunityModel> AddAsync(CommunityModel model)
         {
             if (model == null)
             {
                 throw new ForumException("Passed model was equal null.");
             }
-            if (string.IsNullOrEmpty(model.Title))
-            {
-                throw new ForumException("Title cannot be null.");
-            }
 
             var user = await _userManager.FindByIdAsync(model.CreatorId.ToString());
-            var role = await _roleManager.FindByNameAsync("Moderator");
-            await _userManager.AddToRoleAsync(user, role.Name);
 
-            model.CreationDate = DateTime.Now;
+            if (user == null)
+            {
+                throw new ForumException("User doesn't exist.");
+            }
+
+            model.CreationDate = DateTime.Now.ToLongTimeString();
             await UnitOfWork.CommunityRepository.AddAsync(Mapper.Map<Community>(model));
-            await UnitOfWork.SaveAsync();
+
+            try
+            {
+                await UnitOfWork.SaveAsync();
+            }
+            catch (DbUpdateException)
+            {
+                throw new ForumException("Community with the same title already exist.");
+            }
+
+            await AttachUserToCreatedCommunityAsync(user, model.Title);
+            return model;
         }
 
         /// <inheritdoc />
@@ -67,10 +77,6 @@ namespace Business.Services
             {
                 throw new ForumException("Passed model was equal null.");
             }
-            if (string.IsNullOrEmpty(model.Title))
-            {
-                throw new ForumException("Title cannot be null.");
-            }
 
             UnitOfWork.CommunityRepository.Update(Mapper.Map<Community>(model));
             await UnitOfWork.SaveAsync();
@@ -79,6 +85,17 @@ namespace Business.Services
         /// <inheritdoc />
         public async Task DeleteAsync(int modelId)
         {
+            var community = await UnitOfWork.CommunityRepository.GetByIdAsync(modelId);
+            var user = await _userManager.FindByIdAsync(community.CreatorId.ToString());
+
+            if (user == null)
+            {
+                throw new ForumException("User doesn't exist.");
+            }
+
+            var role = await _roleManager.FindByNameAsync("Moderator");
+            await _userManager.RemoveFromRoleAsync(user, role.Name);
+
             await UnitOfWork.CommunityRepository.DeleteByIdAsync(modelId);
             await UnitOfWork.SaveAsync();
         }
@@ -93,7 +110,7 @@ namespace Business.Services
                 throw new ForumException("Community doesn't exist.");
             }
 
-            return Mapper.Map<IEnumerable<UserModel>>(community.Members);
+            return Mapper.Map<IEnumerable<UserModel>>(community.Members.Select(c => c.User));
         }
 
         /// <inheritdoc />
@@ -101,15 +118,21 @@ namespace Business.Services
         {
             var user = await _userManager.FindByIdAsync(userId.ToString());
 
-            if (user != null)
+            if (user == null)
             {
-                var role = await _roleManager.FindByNameAsync("Moderator");
-                await _userManager.AddToRoleAsync(user, role.Name);
-
-                user.ModeratedCommunityId = communityId;
-                await _userManager.UpdateAsync(user);
-                await UnitOfWork.SaveAsync();
+                throw new ForumException("User doesn't exist.");
             }
+
+            if (user.CreatedCommunityId != null)
+            {
+                throw new ForumException("User can moderate only one community.");
+            }
+
+            var role = await _roleManager.FindByNameAsync("Moderator");
+            await _userManager.AddToRoleAsync(user, role.Name);
+
+            user.ModeratedCommunityId = communityId;
+            await UnitOfWork.SaveAsync();
         }
 
         /// <inheritdoc />
@@ -117,20 +140,27 @@ namespace Business.Services
         {
             var user = await _userManager.FindByIdAsync(userId.ToString());
 
-            if (user != null)
+            if (user != null && user.ModeratedCommunityId == communityId)
             {
                 var role = await _roleManager.FindByNameAsync("Moderator");
                 await _userManager.RemoveFromRoleAsync(user, role.Name);
 
                 user.ModeratedCommunityId = null;
-                await _userManager.UpdateAsync(user);
                 await UnitOfWork.SaveAsync();
             }
         }
 
         /// <inheritdoc />
-        public async Task JoinCommunity(int userId, int communityId)
+        public async Task JoinCommunityAsync(int userId, int communityId)
         {
+            var existedUserCommunity = (await UnitOfWork.UserCommunityRepository.GetAllAsync())
+                .FirstOrDefault(uc => uc.UserId == userId && uc.CommunityId == communityId);
+
+            if (existedUserCommunity != null)
+            {
+                return;
+            }
+
             var userCommunity = new UserCommunity
             {
                 UserId = userId,
@@ -142,7 +172,7 @@ namespace Business.Services
         }
 
         /// <inheritdoc />
-        public async Task LeaveCommunity(int userId, int communityId)
+        public async Task LeaveCommunityAsync(int userId, int communityId)
         {
             var userCommunity = (await UnitOfWork.UserCommunityRepository.GetAllAsync())
                 .FirstOrDefault(uc => uc.UserId == userId && uc.CommunityId == communityId);
@@ -152,6 +182,21 @@ namespace Business.Services
                 UnitOfWork.UserCommunityRepository.Delete(userCommunity);
                 await UnitOfWork.SaveAsync();
             }
+        }
+
+        private async Task AttachUserToCreatedCommunityAsync(User user, string communityTitle)
+        {
+            var role = await _roleManager.FindByNameAsync("Moderator");
+            await _userManager.AddToRoleAsync(user, role.Name);
+
+            var community = (await UnitOfWork.CommunityRepository.GetAllAsync())
+                .First(c => c.Title == communityTitle);
+
+            user.CreatedCommunityId = community.Id;
+            user.ModeratedCommunityId = community.Id;
+            var userCommunity = new UserCommunity { UserId = user.Id, CommunityId = community.Id };
+            await UnitOfWork.UserCommunityRepository.AddAsync(userCommunity);
+            await UnitOfWork.SaveAsync();
         }
     }
 }

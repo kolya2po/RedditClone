@@ -30,6 +30,7 @@ namespace Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(nullable: true),
                     About = table.Column<string>(nullable: true),
+                    CreatorId = table.Column<int>(nullable: false),
                     CreationDate = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
@@ -80,17 +81,26 @@ namespace Data.Migrations
                     AccessFailedCount = table.Column<int>(nullable: false),
                     BirthDate = table.Column<DateTime>(nullable: false),
                     Karma = table.Column<int>(nullable: false),
+                    CreatedCommunityId = table.Column<int>(nullable: true),
                     ModeratedCommunityId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_AspNetUsers_Communities_CreatedCommunityId",
+                        column: x => x.CreatedCommunityId,
+                        principalTable: "Communities",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict,
+                        onUpdate: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_AspNetUsers_Communities_ModeratedCommunityId",
                         column: x => x.ModeratedCommunityId,
                         principalTable: "Communities",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Restrict,
+                        onUpdate: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -208,24 +218,25 @@ namespace Data.Migrations
                     Title = table.Column<string>(nullable: true),
                     Text = table.Column<string>(nullable: true),
                     IsPinned = table.Column<bool>(nullable: false),
+                    CommentsAreBlocked = table.Column<bool>(nullable: false),
                     Rating = table.Column<int>(nullable: false),
                     PostingDate = table.Column<DateTime>(nullable: false),
-                    UserId = table.Column<int>(nullable: false),
+                    AuthorId = table.Column<int>(nullable: false),
                     CommunityId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Topics", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Topics_Communities_CommunityId",
-                        column: x => x.CommunityId,
-                        principalTable: "Communities",
+                        name: "FK_Topics_AspNetUsers_AuthorId",
+                        column: x => x.AuthorId,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Topics_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
+                        name: "FK_Topics_Communities_CommunityId",
+                        column: x => x.CommunityId,
+                        principalTable: "Communities",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -264,32 +275,45 @@ namespace Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Text = table.Column<string>(nullable: true),
                     Rating = table.Column<int>(nullable: false),
-                    UserId = table.Column<int>(nullable: false),
-                    TopicId = table.Column<int>(nullable: false),
-                    CommentId = table.Column<int>(nullable: true)
+                    AuthorId = table.Column<int>(nullable: false),
+                    TopicId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Comments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Comments_Comments_CommentId",
-                        column: x => x.CommentId,
-                        principalTable: "Comments",
+                        name: "FK_Comments_AspNetUsers_AuthorId",
+                        column: x => x.AuthorId,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Comments_Topics_TopicId",
                         column: x => x.TopicId,
                         principalTable: "Topics",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Comments_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { 1, "4095bc3b-396d-437d-bd6c-0fce498c209d", "Registered", "REGISTERED" },
+                    { 2, "6eac4ad2-daab-402a-b864-691d05008f02", "Moderator", "MODERATOR" },
+                    { 3, "1d5a0c83-6a6c-4406-8880-ea3e51c22e01", "Administrator", "ADMINISTRATOR" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "BirthDate", "ConcurrencyStamp", "CreatedCommunityId", "Email", "EmailConfirmed", "Karma", "LockoutEnabled", "LockoutEnd", "ModeratedCommunityId", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { 1, 0, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "c5bc7f0d-9a4b-4d64-91b0-bee35a517361", null, "admin@email.com", true, 0, false, null, null, "ADMIN@EMAIL.COM", "ADMIN", "AQAAAAEAACcQAAAAEKewyerrw74gL9+VJ3WzuIgyJGHnoGNlFGdQQgtY6I1l0qt2TPi3uOu91Qb9dRJe/A==", null, false, null, false, "admin" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "UserId", "RoleId" },
+                values: new object[] { 1, 3 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -306,17 +330,24 @@ namespace Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserClaims_UserId",
                 table: "AspNetUserClaims",
-                column: "AuthorId");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserLogins_UserId",
                 table: "AspNetUserLogins",
-                column: "AuthorId");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserRoles_RoleId",
                 table: "AspNetUserRoles",
                 column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_CreatedCommunityId",
+                table: "AspNetUsers",
+                column: "CreatedCommunityId",
+                unique: true,
+                filter: "[CreatedCommunityId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUsers_ModeratedCommunityId",
@@ -336,9 +367,9 @@ namespace Data.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Comments_CommentId",
+                name: "IX_Comments_AuthorId",
                 table: "Comments",
-                column: "CommentId");
+                column: "AuthorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_TopicId",
@@ -346,24 +377,19 @@ namespace Data.Migrations
                 column: "TopicId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Comments_UserId",
-                table: "Comments",
-                column: "AuthorId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Rules_CommunityId",
                 table: "Rules",
                 column: "CommunityId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Topics_AuthorId",
+                table: "Topics",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Topics_CommunityId",
                 table: "Topics",
                 column: "CommunityId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Topics_UserId",
-                table: "Topics",
-                column: "AuthorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserCommunities_CommunityId",
@@ -373,7 +399,7 @@ namespace Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_UserCommunities_UserId",
                 table: "UserCommunities",
-                column: "AuthorId");
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

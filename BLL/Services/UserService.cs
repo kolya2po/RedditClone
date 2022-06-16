@@ -8,6 +8,7 @@ using Business.Validation;
 using Data.Interfaces;
 using Data.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Business.Services
 {
@@ -26,14 +27,22 @@ namespace Business.Services
         /// <inheritdoc />
         public async Task<bool> RegistrationAsync(RegistrationModel model)
         {
-            // TODO: Add roles.
+            IdentityResult result;
+
             var user = new User
             {
                 Email = model.Email,
                 UserName = model.UserName
             };
 
-            var result = await _userManager.CreateAsync(user, model.Password);
+            try
+            {
+                result = await _userManager.CreateAsync(user, model.Password);
+            }
+            catch (DbUpdateException)
+            {
+                throw new ForumException("User with the same email already exist.");
+            }
 
             if (!result.Succeeded)
             {

@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoMapper;
 using Business.Interfaces;
 using Business.MapModels;
-using Business.Validation;
 using Data.Interfaces;
 using Data.Models;
 
@@ -17,42 +15,17 @@ namespace Business.Services
         }
 
         /// <inheritdoc />
-        public async Task<IEnumerable<RuleModel>> GetAllByCommunityIdAsync(int communityId)
+        public async Task<RuleModel> AddAsync(RuleModel model)
         {
-            var community = await UnitOfWork.CommunityRepository.GetByIdWithDetailsAsync(communityId);
-
-            if (community == null)
-            {
-                throw new ForumException("Community doesn't exist");
-            }
-
-            return Mapper.Map<IEnumerable<RuleModel>>(community.Rules);
-        }
-
-        /// <inheritdoc />
-        public async Task AddAsync(RuleModel model)
-        {
-            if (string.IsNullOrEmpty(model.Title))
-            {
-                throw new ForumException("Title cannot be null");
-            }
-
             await UnitOfWork.RuleRepository.AddAsync(Mapper.Map<Rule>(model));
             await UnitOfWork.SaveAsync();
+
+            return model;
         }
 
         /// <inheritdoc />
         public async Task UpdateAsync(RuleModel model)
         {
-            if (model == null)
-            {
-                throw new ForumException("Rule cannot be null");
-            }
-            if (string.IsNullOrEmpty(model.Title))
-            {
-                throw new ForumException("Title cannot be null");
-            }
-
             UnitOfWork.RuleRepository.Update(Mapper.Map<Rule>(model));
             await UnitOfWork.SaveAsync();
         }

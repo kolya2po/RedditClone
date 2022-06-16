@@ -4,8 +4,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Data.ModelsDbConfiguration
 {
+    /// <summary>
+    /// Implements IEntityTypeConfiguration interface.
+    /// Provides configuration for entities of type Topic.
+    /// </summary>
     public class TopicConfiguration : IEntityTypeConfiguration<Topic>
     {
+        /// <inheritdoc />
         public void Configure(EntityTypeBuilder<Topic> builder)
         {
             builder.HasOne(t => t.Author)

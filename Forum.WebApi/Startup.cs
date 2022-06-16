@@ -1,5 +1,8 @@
+using Business;
 using Business.ServiceConfiguration;
 using Data.ServiceConfiguration;
+using Forum.WebApi.ErrorHandling;
+using Forum.WebApi.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -21,7 +24,19 @@ namespace Forum.WebApi
         {
             services.AddData(Configuration);
             services.AddBusinessServices();
+            services.AddAutoMapper(opt => opt.AddProfile(new AutoMapperPlProfile()));
+
             services.AddIdentityServices();
+
+            services.AddCors(opt =>
+            {
+                opt.AddDefaultPolicy(policy =>
+                {
+                    policy.AllowAnyHeader();
+                    policy.AllowAnyMethod();
+                    policy.AllowAnyOrigin();
+                });
+            });
 
             services.AddControllers();
         }
@@ -36,15 +51,12 @@ namespace Forum.WebApi
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            app.UseCors();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseCors(opt =>
-            {
-                opt.AllowAnyHeader();
-                opt.AllowAnyMethod();
-                opt.AllowAnyOrigin();
-            });
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

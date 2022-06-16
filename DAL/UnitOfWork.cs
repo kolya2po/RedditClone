@@ -4,6 +4,9 @@ using Data.Repositories;
 
 namespace Data
 {
+    /// <summary>
+    /// Implements IUnitOfWork interface.
+    /// </summary>
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ForumDbContext _context;
@@ -12,6 +15,11 @@ namespace Data
         private RuleRepository _ruleRepository;
         private TopicRepository _topicRepository;
         private UserCommunityRepository _userCommunityRepository;
+
+        /// <summary>
+        /// Initializes a new instance of the UnitOfWork.
+        /// </summary>
+        /// <param name="context">Instance of the ForumDbContext class.</param>
         public UnitOfWork(ForumDbContext context)
         {
             _context = context;

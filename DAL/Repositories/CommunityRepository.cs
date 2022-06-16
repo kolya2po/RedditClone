@@ -6,6 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repositories
 {
+    /// <summary>
+    /// Implements ICommunityRepository interface.
+    /// </summary>
     public class CommunityRepository : BaseRepository, ICommunityRepository
     {
         /// <inheritdoc />
@@ -28,6 +31,7 @@ namespace Data.Repositories
         /// <inheritdoc />
         public async Task AddAsync(Community entity)
         {
+            entity.Creator = null;
             await DbContext.Communities.AddAsync(entity);
         }
 
@@ -51,6 +55,7 @@ namespace Data.Repositories
         /// <inheritdoc />
         public void Update(Community entity)
         {
+            entity.Creator = null;
             DbContext.Communities.Update(entity);
         }
 
@@ -62,7 +67,6 @@ namespace Data.Repositories
                 .Include(c => c.Rules)
                 .Include(c => c.Members)
                 .Include(c => c.Moderators)
-                .Include(c => c.Posts)
                 .ToListAsync();
         }
 
@@ -74,9 +78,6 @@ namespace Data.Repositories
                 .Include(c => c.Rules)
                 .Include(c => c.Members)
                 .Include(c => c.Moderators)
-                .Include(c => c.Posts)
-                .ThenInclude(p => p.Comments)
-                .ThenInclude(p => p.Author)
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
     }

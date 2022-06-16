@@ -28,6 +28,8 @@ namespace Data.Repositories
         /// <inheritdoc />
         public async Task AddAsync(Topic entity)
         {
+            entity.Author = null;
+            entity.Community = null;
             await DbContext.Topics.AddAsync(entity);
         }
 
@@ -51,6 +53,8 @@ namespace Data.Repositories
         /// <inheritdoc />
         public void Update(Topic entity)
         {
+            entity.Community = null;
+            entity.Author = null;
             DbContext.Topics.Update(entity);
         }
 
@@ -73,7 +77,6 @@ namespace Data.Repositories
                 .ThenInclude(c => c.Author)
                 .Include(t => t.Author)
                 .Include(t => t.Community)
-                .ThenInclude(c => c.Members)
                 .FirstOrDefaultAsync(t => t.Id == id);
         }
     }

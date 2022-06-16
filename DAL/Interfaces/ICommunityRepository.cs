@@ -1,13 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Data.Models;
+﻿using Data.Models;
 
 namespace Data.Interfaces
 {
-    public interface ICommunityRepository : IRepository<Community>
+    /// <inheritdoc cref="IRepository{Community}"/>
+    public interface ICommunityRepository : IRepository<Community>, IRepositoryExtended<Community>
     {
-        Task<IEnumerable<Community>> GetAllWithDetailsAsync();
-
-        Task<Community> GetByIdWithDetailsAsync(int id);
     }
 }

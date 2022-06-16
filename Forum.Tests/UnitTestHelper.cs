@@ -31,7 +31,7 @@ namespace Forum.Tests
 
         public static IMapper CreateMapperFromProfile()
         {
-            var autoMapperProfile = new AutoMapperProfile();
+            var autoMapperProfile = new AutoMapperBllProfile();
             var config = new MapperConfiguration(cfg => cfg.AddProfile(autoMapperProfile));
 
             return new Mapper(config);

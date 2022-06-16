@@ -6,9 +6,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repositories
 {
+    /// <summary>
+    /// Implements IRuleRepository interface.
+    /// </summary>
     public class RuleRepository : BaseRepository, IRuleRepository
     {
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public RuleRepository(ForumDbContext dbContext) : base(dbContext)
         {
         }
@@ -28,6 +31,7 @@ namespace Data.Repositories
         /// <inheritdoc />
         public async Task AddAsync(Rule entity)
         {
+            entity.Community = null;
             await DbContext.Rules.AddAsync(entity);
         }
 
@@ -51,6 +55,7 @@ namespace Data.Repositories
         /// <inheritdoc />
         public void Update(Rule entity)
         {
+            entity.Community = null;
             DbContext.Rules.Update(entity);
         }
     }

@@ -17,7 +17,7 @@ namespace Business.ServiceConfiguration
             service.AddTransient<ITopicService, TopicService>();
             service.AddTransient<IUserService, UserService>();
 
-            service.AddAutoMapper(opt => opt.AddMaps(typeof(AutoMapperProfile).Assembly));
+            service.AddAutoMapper(opt => opt.AddMaps(typeof(AutoMapperBllProfile).Assembly));
             return service;
         }
 

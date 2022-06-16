@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(ForumDbContext))]
-    [Migration("20220609155127_UpdateTopicModel")]
-    partial class UpdateTopicModel
+    [Migration("20220612133919_UpdateTopicEntity")]
+    partial class UpdateTopicEntity
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -28,8 +28,11 @@ namespace Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("CommentId")
+                    b.Property<int>("AuthorId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("PostingDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Rating")
                         .HasColumnType("int");
@@ -40,16 +43,11 @@ namespace Data.Migrations
                     b.Property<int>("TopicId")
                         .HasColumnType("int");
 
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("CommentId");
+                    b.HasIndex("AuthorId");
 
                     b.HasIndex("TopicId");
-
-                    b.HasIndex("AuthorId");
 
                     b.ToTable("Comments");
                 });
@@ -67,10 +65,17 @@ namespace Data.Migrations
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("CreatorId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Title")
+                        .IsUnique()
+                        .HasFilter("[Title] IS NOT NULL");
 
                     b.ToTable("Communities");
                 });
@@ -105,6 +110,9 @@ namespace Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("CommentsAreBlocked")
                         .HasColumnType("bit");
 
@@ -126,14 +134,11 @@ namespace Data.Migrations
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("CommunityId");
-
                     b.HasIndex("AuthorId");
+
+                    b.HasIndex("CommunityId");
 
                     b.ToTable("Topics");
                 });
@@ -154,6 +159,9 @@ namespace Data.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CreatedCommunityId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(256)")
@@ -203,6 +211,14 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedCommunityId")
+                        .IsUnique()
+                        .HasFilter("[CreatedCommunityId] IS NOT NULL");
+
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasFilter("[Email] IS NOT NULL");
+
                     b.HasIndex("ModeratedCommunityId");
 
                     b.HasIndex("NormalizedEmail")
@@ -214,6 +230,25 @@ namespace Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AccessFailedCount = 0,
+                            BirthDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConcurrencyStamp = "15f09a08-f38d-42e3-82f4-dc43cb824213",
+                            Email = "admin@email.com",
+                            EmailConfirmed = true,
+                            Karma = 0,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ADMIN@EMAIL.COM",
+                            NormalizedUserName = "ADMIN",
+                            PasswordHash = "AQAAAAEAACcQAAAAEI/95hZKYAf7ssbIGgDnvNwwqIDosOrfPXnDmGHrQFi3ogpktKVmTHDAgoWV5OjhvA==",
+                            PhoneNumberConfirmed = false,
+                            TwoFactorEnabled = false,
+                            UserName = "admin"
+                        });
                 });
 
             modelBuilder.Entity("Data.Models.UserCommunity", b =>
@@ -226,14 +261,14 @@ namespace Data.Migrations
                     b.Property<int>("CommunityId")
                         .HasColumnType("int");
 
-                    b.Property<int>("AuthorId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CommunityId");
 
-                    b.HasIndex("AuthorId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("UserCommunities");
                 });
@@ -265,6 +300,29 @@ namespace Data.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ConcurrencyStamp = "56abe46d-7897-4b9c-a467-1fd0e26db1fd",
+                            Name = "Registered",
+                            NormalizedName = "REGISTERED"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ConcurrencyStamp = "c09e0c46-b774-42fd-ab3f-e8ddc63c0dcf",
+                            Name = "Moderator",
+                            NormalizedName = "MODERATOR"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ConcurrencyStamp = "b328830a-1394-435e-a8f3-969b775bbec8",
+                            Name = "Administrator",
+                            NormalizedName = "ADMINISTRATOR"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -303,12 +361,12 @@ namespace Data.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("AuthorId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuthorId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("AspNetUserClaims");
                 });
@@ -324,34 +382,41 @@ namespace Data.Migrations
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("AuthorId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
-                    b.HasIndex("AuthorId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("AspNetUserLogins");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
                 {
-                    b.Property<int>("AuthorId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
 
-                    b.HasKey("AuthorId", "RoleId");
+                    b.HasKey("UserId", "RoleId");
 
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = 1,
+                            RoleId = 3
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
-                    b.Property<int>("AuthorId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.Property<string>("LoginProvider")
@@ -363,26 +428,22 @@ namespace Data.Migrations
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("AuthorId", "LoginProvider", "Name");
+                    b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
                 });
 
             modelBuilder.Entity("Data.Models.Comment", b =>
                 {
-                    b.HasOne("Data.Models.Comment", null)
-                        .WithMany("Replies")
-                        .HasForeignKey("CommentId");
+                    b.HasOne("Data.Models.User", "Author")
+                        .WithMany("Comments")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Data.Models.Topic", "Topic")
                         .WithMany("Comments")
                         .HasForeignKey("TopicId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Data.Models.User", "Author")
-                        .WithMany("Comments")
-                        .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -398,21 +459,25 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Data.Models.Topic", b =>
                 {
-                    b.HasOne("Data.Models.Community", "Community")
-                        .WithMany("Posts")
-                        .HasForeignKey("CommunityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Data.Models.User", "Author")
                         .WithMany("Posts")
                         .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Models.Community", "Community")
+                        .WithMany("Posts")
+                        .HasForeignKey("CommunityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("Data.Models.User", b =>
                 {
+                    b.HasOne("Data.Models.Community", "CreatedCommunity")
+                        .WithOne("Creator")
+                        .HasForeignKey("Data.Models.User", "CreatedCommunityId");
+
                     b.HasOne("Data.Models.Community", "ModeratedCommunity")
                         .WithMany("Moderators")
                         .HasForeignKey("ModeratedCommunityId");
@@ -428,7 +493,7 @@ namespace Data.Migrations
 
                     b.HasOne("Data.Models.User", "User")
                         .WithMany("Communities")
-                        .HasForeignKey("AuthorId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -446,7 +511,7 @@ namespace Data.Migrations
                 {
                     b.HasOne("Data.Models.User", null)
                         .WithMany()
-                        .HasForeignKey("AuthorId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -455,7 +520,7 @@ namespace Data.Migrations
                 {
                     b.HasOne("Data.Models.User", null)
                         .WithMany()
-                        .HasForeignKey("AuthorId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -470,7 +535,7 @@ namespace Data.Migrations
 
                     b.HasOne("Data.Models.User", null)
                         .WithMany()
-                        .HasForeignKey("AuthorId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -479,7 +544,7 @@ namespace Data.Migrations
                 {
                     b.HasOne("Data.Models.User", null)
                         .WithMany()
-                        .HasForeignKey("AuthorId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

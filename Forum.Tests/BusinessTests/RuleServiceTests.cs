@@ -17,47 +17,47 @@ namespace Forum.Tests.BusinessTests
     [TestFixture]
     public class RuleServiceTests
     {
-        [Test]
-        public async Task GetAllByCommunityIdAsync_ReturnsAllRulesThatBelongsToCommunity()
-        {
-            // Arrange
-            var expected = GetTestRuleModels;
-            var mockUnitOfWork = new Mock<IUnitOfWork>();
-            var community = new Community
-            {
-                Id = 1,
-                Rules = UnitTestHelper.GetTestRules()
-            };
+        //[Test]
+        //public async Task GetAllByCommunityIdAsync_ReturnsAllRulesThatBelongsToCommunity()
+        //{
+        //    // Arrange
+        //    var expected = GetTestRuleModels;
+        //    var mockUnitOfWork = new Mock<IUnitOfWork>();
+        //    var community = new Community
+        //    {
+        //        Id = 1,
+        //        Rules = UnitTestHelper.GetTestRules()
+        //    };
 
-            mockUnitOfWork.Setup(u => u.CommunityRepository.GetByIdWithDetailsAsync(1))
-                .ReturnsAsync(community);
+        //    mockUnitOfWork.Setup(u => u.CommunityRepository.GetByIdWithDetailsAsync(1))
+        //        .ReturnsAsync(community);
 
-            var ruleService = new RuleService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile());
+        //    var ruleService = new RuleService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile());
 
-            // Act
-            var actual = await ruleService.GetAllByCommunityIdAsync(1);
+        //    // Act
+        //    var actual = await ruleService.GetAllByCommunityIdAsync(1);
 
-            // Assert
-            actual.Should().BeEquivalentTo(expected);
-        }
+        //    // Assert
+        //    actual.Should().BeEquivalentTo(expected);
+        //}
 
-        [Test]
-        public async Task GetAllByCommunityIdAsync_ThrowsForumExceptionIfCommunityDoesntExist()
-        {
-            // Arrange
-            var mockUnitOfWork = new Mock<IUnitOfWork>();
+        //[Test]
+        //public async Task GetAllByCommunityIdAsync_ThrowsForumExceptionIfCommunityDoesntExist()
+        //{
+        //    // Arrange
+        //    var mockUnitOfWork = new Mock<IUnitOfWork>();
 
-            mockUnitOfWork.Setup(u => u.CommunityRepository.GetByIdWithDetailsAsync(1))
-                .ReturnsAsync((Community)null);
+        //    mockUnitOfWork.Setup(u => u.CommunityRepository.GetByIdWithDetailsAsync(1))
+        //        .ReturnsAsync((Community)null);
 
-            var ruleService = new RuleService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile());
+        //    var ruleService = new RuleService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile());
 
-            // Act
-            Func<Task> call = async () => await ruleService.GetAllByCommunityIdAsync(10);
+        //    // Act
+        //    Func<Task> call = async () => await ruleService.GetAllByCommunityIdAsync(10);
 
-            // Assert
-            await call.Should().ThrowAsync<ForumException>();
-        }
+        //    // Assert
+        //    await call.Should().ThrowAsync<ForumException>();
+        //}
 
         [Test]
         public async Task AddAsync_AddsNewRule()

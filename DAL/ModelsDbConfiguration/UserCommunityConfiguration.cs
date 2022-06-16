@@ -4,6 +4,10 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Data.ModelsDbConfiguration
 {
+    /// <summary>
+    /// Implements IEntityTypeConfiguration interface.
+    /// Provides configuration for entities of type UserCommunity.
+    /// </summary>
     public class UserCommunityConfiguration : IEntityTypeConfiguration<UserCommunity>
     {
         /// <inheritdoc />

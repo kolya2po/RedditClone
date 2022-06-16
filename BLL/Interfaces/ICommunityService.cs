@@ -9,7 +9,7 @@ namespace Business.Interfaces
         Task<IEnumerable<UserModel>> GetAllUsers(int communityId);
         Task AddModeratorAsync(int id, int userId);
         Task RemoveModeratorAsync(int id, int userId);
-        Task JoinCommunity(int userId, int communityId);
-        Task LeaveCommunity(int userId, int communityId);
+        Task JoinCommunityAsync(int userId, int communityId);
+        Task LeaveCommunityAsync(int userId, int communityId);
     }
 }
