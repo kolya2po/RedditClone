@@ -17,7 +17,7 @@ namespace Forum.WebApi.Models
             CreateMap<UpdateCommunityDto, CommunityModel>().ReverseMap();
 
             CreateMap<CreateRuleDto, RuleModel>().ReverseMap();
-            CreateMap<UpdateCommunityDto, RuleModel>().ReverseMap();
+            CreateMap<UpdateRuleDto, RuleModel>().ReverseMap();
 
             CreateMap<CreateCommentDto, CommentModel>().ReverseMap();
             CreateMap<UpdateCommentDto, CommentModel>().ReverseMap();

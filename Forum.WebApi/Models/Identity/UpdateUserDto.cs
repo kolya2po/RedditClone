@@ -9,8 +9,7 @@ namespace Forum.WebApi.Models.Identity
         public int Id { get; set; }
         public string UserName { get; set; }
 
-        [DataType(DataType.Date)]
         [BirthDateValidation]
-        public DateTime? BirthDate { get; set; }
+        public string BirthDate { get; set; }
     }
 }

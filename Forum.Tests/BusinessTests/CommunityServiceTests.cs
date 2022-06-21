@@ -18,8 +18,8 @@ namespace Forum.Tests.BusinessTests
             var mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(u => u.CommunityRepository.GetAllWithDetailsAsync())
                 .ReturnsAsync(GetTestCommunities);
-            var communityService = new CommunityService(mockUnitOfWork.Object, null, UnitTestHelper.CreateMapperFromProfile(),
-                null);
+            var communityService = new CommunityService(mockUnitOfWork.Object,
+                null, UnitTestHelper.CreateMapperFromProfile());
 
             // Act
             var actual = await communityService.GetAllAsync();

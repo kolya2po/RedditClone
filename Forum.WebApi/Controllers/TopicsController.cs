@@ -45,7 +45,7 @@ namespace Forum.WebApi.Controllers
             return Ok();
         }
 
-        [HttpDelete]
+        [HttpDelete("{id:int}")]
         [Authorize]
         public async Task Delete(int id)
         {
@@ -67,21 +67,21 @@ namespace Forum.WebApi.Controllers
         }
 
         [HttpPut("{id:int}/pin")]
-        [Authorize(Roles = "Moderator")]
+        [Authorize(Policy = "ModeratorOnly")]
         public async Task Pin(int id)
         {
             await _topicService.PinTopicAsync(id);
         }
 
         [HttpPut("{id:int}/unpin")]
-        [Authorize(Roles = "Moderator")]
+        [Authorize(Policy = "ModeratorOnly")]
         public async Task Unpin(int id)
         {
             await _topicService.UnpinTopicAsync(id);
         }
 
         [HttpPut("{id:int}/block-comments")]
-        [Authorize(Roles = "Moderator")]
+        [Authorize(Policy = "ModeratorOnly")]
         public async Task BlockComments(int id)
         {
             await _topicService.BlockCommentsAsync(id);

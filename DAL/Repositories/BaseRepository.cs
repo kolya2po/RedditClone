@@ -1,7 +1,7 @@
 ﻿namespace Data.Repositories
 {
     /// <summary>
-    /// Base repository.
+    /// Base repository. Contains shared field.
     /// </summary>
     public class BaseRepository
     {
@@ -11,7 +11,7 @@
         protected readonly ForumDbContext DbContext;
 
         /// <summary>
-        /// Initialize DbContext field.
+        /// Initializes a new instance of the BaseRepository. Also initializes DbContext field.
         /// </summary>
         /// <param name="dbContext">Instance of the ForumDbContext class.</param>
         protected BaseRepository(ForumDbContext dbContext)

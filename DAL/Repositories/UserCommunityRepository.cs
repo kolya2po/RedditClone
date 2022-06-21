@@ -6,6 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repositories
 {
+    /// <summary>
+    /// Extends BaseRepository class and implements IUserCommunityRepository interface.
+    /// </summary>
     public class UserCommunityRepository : BaseRepository, IUserCommunityRepository
     {
         /// <inheritdoc />

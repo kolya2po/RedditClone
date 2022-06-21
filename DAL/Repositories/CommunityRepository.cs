@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Data.Repositories
 {
     /// <summary>
-    /// Implements ICommunityRepository interface.
+    /// Extends BaseRepository class and implements ICommunityRepository interface.
     /// </summary>
     public class CommunityRepository : BaseRepository, ICommunityRepository
     {
@@ -64,9 +64,7 @@ namespace Data.Repositories
         {
             return await DbContext.Communities
                 .Include(c => c.Creator)
-                .Include(c => c.Rules)
                 .Include(c => c.Members)
-                .Include(c => c.Moderators)
                 .ToListAsync();
         }
 
@@ -74,7 +72,10 @@ namespace Data.Repositories
         public async Task<Community> GetByIdWithDetailsAsync(int id)
         {
             return await DbContext.Communities
-                .Include(c => c.Creator)
+                .Include(c => c.Posts)
+                .ThenInclude(p => p.Author)
+                .Include(c => c.Posts)
+                .ThenInclude(p => p.Comments)
                 .Include(c => c.Rules)
                 .Include(c => c.Members)
                 .Include(c => c.Moderators)

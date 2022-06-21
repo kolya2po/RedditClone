@@ -2,6 +2,9 @@
 
 namespace Business.MapModels
 {
+    /// <summary>
+    /// Represents Community mapped model.
+    /// </summary>
     public class CommunityModel : BaseModel
     {
         public string Title { get; set; }

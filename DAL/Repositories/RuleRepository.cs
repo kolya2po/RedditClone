@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Data.Repositories
 {
     /// <summary>
-    /// Implements IRuleRepository interface.
+    /// Extends BaseRepository class and implements IRuleRepository interface.
     /// </summary>
     public class RuleRepository : BaseRepository, IRuleRepository
     {

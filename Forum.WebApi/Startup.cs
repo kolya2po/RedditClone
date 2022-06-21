@@ -26,7 +26,7 @@ namespace Forum.WebApi
             services.AddBusinessServices();
             services.AddAutoMapper(opt => opt.AddProfile(new AutoMapperPlProfile()));
 
-            services.AddIdentityServices();
+            services.AddIdentityServices(Configuration);
 
             services.AddCors(opt =>
             {

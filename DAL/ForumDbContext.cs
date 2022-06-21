@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Data.Models;
+﻿using Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +10,17 @@ namespace Data
     /// </summary>
     public class ForumDbContext : IdentityDbContext<User, IdentityRole<int>, int>
     {
+        public ForumDbContext()
+        {
+        }
+
+        /// <inheritdoc />
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
+            optionsBuilder.UseSqlServer("Server=KOLYAPC\\SQLEXPRESS;Database=forumdb;Trusted_Connection=true;");
+        }
+
         /// <summary>
         /// Initializes a new instance of the ForumDbContext.
         /// </summary>
@@ -57,23 +67,6 @@ namespace Data
             builder.Entity<User>()
                 .HasIndex(i => i.Email)
                 .IsUnique();
-
-            builder.Entity<IdentityRole<int>>()
-                .HasData(new List<IdentityRole<int>>
-                {
-                    new IdentityRole<int>
-                    {
-                        Id = 1,
-                        Name = "Registered",
-                        NormalizedName = "REGISTERED"
-                    },
-                    new IdentityRole<int>
-                    {
-                        Id = 2,
-                        Name = "Moderator",
-                        NormalizedName = "MODERATOR"
-                    }
-                });
         }
     }
 }

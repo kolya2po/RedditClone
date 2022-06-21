@@ -26,13 +26,13 @@ namespace Forum.WebApi.Controllers
         }
 
         [HttpPost("registration")]
-        public async Task<bool> Registration(RegistrationModelDto model)
+        public async Task<UserDto> Registration(RegistrationModelDto model)
         {
             return await _userService.RegistrationAsync(Mapper.Map<RegistrationModel>(model));
         }
 
         [HttpPost("login")]
-        public async Task<bool> Login(LoginModelDto model)
+        public async Task<UserDto> Login(LoginModelDto model)
         {
             return await _userService.LoginAsync(Mapper.Map<LoginModel>(model));
         }

@@ -6,6 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repositories
 {
+    /// <summary>
+    /// Extends BaseRepository class and implements ITopicRepository interface.
+    /// </summary>
     public class TopicRepository : BaseRepository, ITopicRepository
     {
         /// <inheritdoc />
@@ -63,7 +66,6 @@ namespace Data.Repositories
         {
             return await DbContext.Topics
                 .Include(t => t.Comments)
-                .ThenInclude(c => c.Author)
                 .Include(t => t.Author)
                 .Include(t => t.Community)
                 .ToListAsync();

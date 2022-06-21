@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Business.Services
@@ -16,12 +17,10 @@ namespace Business.Services
     public class CommunityService : BaseService, ICommunityService
     {
         private readonly UserManager<User> _userManager;
-        private readonly RoleManager<IdentityRole<int>> _roleManager;
         /// <inheritdoc />
-        public CommunityService(IUnitOfWork unitOfWork, UserManager<User> userManager, IMapper mapper, RoleManager<IdentityRole<int>> roleManager) : base(unitOfWork, mapper)
+        public CommunityService(IUnitOfWork unitOfWork, UserManager<User> userManager, IMapper mapper) : base(unitOfWork, mapper)
         {
             _userManager = userManager;
-            _roleManager = roleManager;
         }
 
         /// <inheritdoc />
@@ -36,7 +35,21 @@ namespace Business.Services
         public async Task<CommunityModel> GetByIdAsync(int id)
         {
             var community = await UnitOfWork.CommunityRepository.GetByIdWithDetailsAsync(id);
-            return Mapper.Map<CommunityModel>(community);
+
+            var model = Mapper.Map<CommunityModel>(community);
+
+            foreach (var topic in model.PostModels)
+            {
+                topic.CommentModels = null;
+            }
+
+            foreach (var moderator in model.ModeratorModels)
+            {
+                moderator.PostModels = null;
+                moderator.CommentModels = null;
+            }
+
+            return model;
         }
 
         /// <inheritdoc />
@@ -54,7 +67,12 @@ namespace Business.Services
                 throw new ForumException("User doesn't exist.");
             }
 
-            model.CreationDate = DateTime.Now.ToLongTimeString();
+            if (user.CreatedCommunityId != null)
+            {
+                throw new ForumException("User has already created community.");
+            }
+
+            model.CreationDate = DateTime.Now.ToLongDateString();
             await UnitOfWork.CommunityRepository.AddAsync(Mapper.Map<Community>(model));
 
             try
@@ -93,8 +111,8 @@ namespace Business.Services
                 throw new ForumException("User doesn't exist.");
             }
 
-            var role = await _roleManager.FindByNameAsync("Moderator");
-            await _userManager.RemoveFromRoleAsync(user, role.Name);
+            var claim = new Claim("ModeratorRole", nameof(Roles.Moderator));
+            await _userManager.RemoveClaimAsync(user, claim);
 
             await UnitOfWork.CommunityRepository.DeleteByIdAsync(modelId);
             await UnitOfWork.SaveAsync();
@@ -110,7 +128,15 @@ namespace Business.Services
                 throw new ForumException("Community doesn't exist.");
             }
 
-            return Mapper.Map<IEnumerable<UserModel>>(community.Members.Select(c => c.User));
+            var users = Mapper.Map<IEnumerable<UserModel>>(community.Members.Select(c => c.User)).ToList();
+
+            foreach (var userModel in users)
+            {
+                userModel.CommentModels = null;
+                userModel.PostModels = null;
+            }
+
+            return users;
         }
 
         /// <inheritdoc />
@@ -128,8 +154,8 @@ namespace Business.Services
                 throw new ForumException("User can moderate only one community.");
             }
 
-            var role = await _roleManager.FindByNameAsync("Moderator");
-            await _userManager.AddToRoleAsync(user, role.Name);
+            var claim = new Claim(ClaimTypes.Role, nameof(Roles.Moderator));
+            await _userManager.AddClaimAsync(user, claim);
 
             user.ModeratedCommunityId = communityId;
             await UnitOfWork.SaveAsync();
@@ -142,8 +168,8 @@ namespace Business.Services
 
             if (user != null && user.ModeratedCommunityId == communityId)
             {
-                var role = await _roleManager.FindByNameAsync("Moderator");
-                await _userManager.RemoveFromRoleAsync(user, role.Name);
+                var claim = new Claim(ClaimTypes.Role, "Moderator");
+                await _userManager.RemoveClaimAsync(user, claim);
 
                 user.ModeratedCommunityId = null;
                 await UnitOfWork.SaveAsync();
@@ -186,8 +212,8 @@ namespace Business.Services
 
         private async Task AttachUserToCreatedCommunityAsync(User user, string communityTitle)
         {
-            var role = await _roleManager.FindByNameAsync("Moderator");
-            await _userManager.AddToRoleAsync(user, role.Name);
+            var claim = new Claim(ClaimTypes.Role, nameof(Roles.Moderator));
+            await _userManager.AddClaimAsync(user, claim);
 
             var community = (await UnitOfWork.CommunityRepository.GetAllAsync())
                 .First(c => c.Title == communityTitle);

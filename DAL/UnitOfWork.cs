@@ -15,6 +15,7 @@ namespace Data
         private RuleRepository _ruleRepository;
         private TopicRepository _topicRepository;
         private UserCommunityRepository _userCommunityRepository;
+        private UserRepository _userRepository;
 
         /// <summary>
         /// Initializes a new instance of the UnitOfWork.
@@ -40,6 +41,9 @@ namespace Data
         /// <inheritdoc />
         public IUserCommunityRepository UserCommunityRepository =>
             _userCommunityRepository ??= new UserCommunityRepository(_context);
+
+        /// <inheritdoc />
+        public IUserRepository UserRepository => _userRepository ??= new UserRepository(_context);
 
         /// <inheritdoc />
         public async Task SaveAsync()

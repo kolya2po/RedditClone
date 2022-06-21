@@ -5,9 +5,12 @@ using Data.Models;
 
 namespace Business
 {
+    /// <inheritdoc />
     public class AutoMapperBllProfile : Profile
     {
-
+        /// <summary>
+        /// Configures mapping between domain and business models.
+        /// </summary>
         public AutoMapperBllProfile()
         {
             CreateMap<Comment, CommentModel>()
@@ -16,7 +19,9 @@ namespace Business
                 .ForMember(dst => dst.CommunityName, opt =>
                     opt.MapFrom(src => src.Topic.Community.Title))
                 .ForMember(dst => dst.PostingDate, opt =>
-                    opt.MapFrom(src => src.PostingDate.ToLongDateString()))
+                    opt.MapFrom(src => $"{src.PostingDate.ToShortDateString()} {src.PostingDate.ToShortTimeString()}"))
+                .ForMember(dst => dst.TopicName, opt =>
+                    opt.MapFrom(src => src.Topic.Title))
                 .ReverseMap();
 
             CreateMap<Topic, TopicModel>()
@@ -24,7 +29,7 @@ namespace Business
                 .ForMember(dst => dst.AuthorName, opt => opt.MapFrom(src => src.Author.UserName))
                 .ForMember(dst => dst.CommunityName, opt => opt.MapFrom(src => src.Community.Title))
                 .ForMember(dst => dst.CommentModels, opt => opt.MapFrom(src => src.Comments))
-                .ForMember(dst => dst.PostingDate, opt => opt.MapFrom(src => src.PostingDate.ToLongDateString()))
+                .ForMember(dst => dst.PostingDate, opt => opt.MapFrom(src => $"{src.PostingDate.ToShortDateString()} {src.PostingDate.ToShortTimeString()}"))
                 .ReverseMap();
 
             CreateMap<Rule, RuleModel>().ReverseMap();
@@ -39,13 +44,14 @@ namespace Business
                 .ForMember(dst => dst.ModeratorModels, opt =>
                     opt.MapFrom(src => src.Moderators))
                 .ForMember(dst => dst.CreationDate, opt =>
-                    opt.MapFrom(src => src.CreationDate.ToLongDateString()))
+                    opt.MapFrom(src => src.CreationDate.ToShortDateString()))
                 .ReverseMap();
 
             CreateMap<User, UserModel>()
                 .ForMember(dst => dst.PostModels, opt => opt.MapFrom(src => src.Posts))
                 .ForMember(dst => dst.CommentModels, opt => opt.MapFrom(src => src.Comments))
-                .ForMember(dst => dst.BirthDate, opt => opt.MapFrom(src => src.BirthDate.ToLongDateString()))
+                .ForMember(dst => dst.BirthDate, opt => opt.MapFrom(src => src.BirthDate.ToShortDateString()))
+                .ForMember(dst => dst.CommunitiesIds, opt => opt.MapFrom(src => src.Communities.Select(c => c.CommunityId)))
                 .ReverseMap();
         }
     }

@@ -22,8 +22,14 @@ namespace Business.Services
         public async Task<IEnumerable<TopicModel>> GetAllAsync()
         {
             var topics = await UnitOfWork.TopicRepository.GetAllWithDetailsAsync();
+            var models = Mapper.Map<IEnumerable<TopicModel>>(topics).ToList();
 
-            return Mapper.Map<IEnumerable<TopicModel>>(topics);
+            foreach (var m in models)
+            {
+                m.CommentModels = null;
+            }
+
+            return models;
         }
 
         /// <inheritdoc />
@@ -42,7 +48,7 @@ namespace Business.Services
                 throw new ForumException("Passed model was equal null.");
             }
 
-            model.PostingDate = DateTime.Now.ToLongDateString();
+            model.PostingDate = $"{DateTime.Now.ToShortDateString()} {DateTime.Now.ToShortTimeString()}";
             await UnitOfWork.TopicRepository.AddAsync(Mapper.Map<Topic>(model));
             await UnitOfWork.SaveAsync();
 

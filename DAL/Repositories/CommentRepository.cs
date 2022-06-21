@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Data.Repositories
 {
     /// <summary>
-    /// Implements ICommentRepository interface.
+    /// Extends BaseRepository class and implements ICommentRepository interface.
     /// </summary>
     public class CommentRepository : BaseRepository, ICommentRepository
     {

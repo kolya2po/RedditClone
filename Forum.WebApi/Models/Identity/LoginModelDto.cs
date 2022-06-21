@@ -11,7 +11,5 @@ namespace Forum.WebApi.Models.Identity
         [Required(ErrorMessage = "Please enter password.")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
-
-        public bool RememberMe { get; set; }
     }
 }

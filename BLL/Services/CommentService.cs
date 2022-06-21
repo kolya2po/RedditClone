@@ -12,21 +12,18 @@ namespace Business.Services
 {
     public class CommentService : BaseService, ICommentService
     {
-
         public CommentService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
         {
         }
 
         /// <inheritdoc />
-        public async Task<CommentModel> AddAsync(CommentModel model)
+        public async Task AddAsync(CommentModel model)
         {
             ValidateCommentModel(model);
 
-            model.PostingDate = DateTime.Now.ToLongDateString();
+            model.PostingDate = $"{DateTime.Now.ToShortDateString()} {DateTime.Now.ToShortTimeString()}";
             await UnitOfWork.CommentRepository.AddAsync(Mapper.Map<Comment>(model));
             await UnitOfWork.SaveAsync();
-
-            return model;
         }
 
         /// <inheritdoc />
@@ -45,7 +42,7 @@ namespace Business.Services
         }
 
         /// <inheritdoc />
-        public async Task<CommentModel> ReplyToCommentAsync(int commentId, CommentModel model)
+        public async Task ReplyToCommentAsync(int commentId, CommentModel model)
         {
             var comment = await UnitOfWork.CommentRepository.GetByIdWithDetailsAsync(commentId);
 
@@ -54,12 +51,10 @@ namespace Business.Services
                 throw new ForumException("Comment doesn't exist.");
             }
 
-            model.PostingDate = DateTime.Now.ToLongDateString();
+            model.PostingDate = $"{DateTime.Now.ToShortDateString()} {DateTime.Now.ToShortTimeString()}";
             model.Text = $"{comment.Author.UserName}, {model.Text}";
             await UnitOfWork.CommentRepository.AddAsync(Mapper.Map<Comment>(model));
             await UnitOfWork.SaveAsync();
-
-            return model;
         }
 
         /// <inheritdoc />
@@ -86,8 +81,7 @@ namespace Business.Services
             {
                 throw new ForumException("Comment doesn't exist.");
             }
-
-            comment.Rating++;
+            comment.Rating--;
             UnitOfWork.CommentRepository.Update(comment);
             await UnitOfWork.SaveAsync();
         }

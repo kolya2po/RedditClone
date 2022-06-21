@@ -1,4 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using Business.Interfaces;
@@ -12,27 +16,40 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Business.Services
 {
+    /// <summary>
+    /// Extends class BaseService and implements IUserService interface.
+    /// </summary>
     public class UserService : BaseService, IUserService
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
-        private readonly RoleManager<IdentityRole<int>> _roleManager;
-        public UserService(IUnitOfWork unitOfWork, UserManager<User> userManager, SignInManager<User> signInManager, IMapper mapper, RoleManager<IdentityRole<int>> roleManager) : base(unitOfWork, mapper)
+        private readonly IJwtHandler _jwnHandler;
+
+        /// <summary>
+        /// Initializes new instance of the UserService class.
+        /// </summary>
+        /// <param name="unitOfWork">Unit of work.</param>
+        /// <param name="userManager">Identity's user manager.</param>
+        /// <param name="signInManager">Identity's sign in manager.</param>
+        /// <param name="mapper">Instance that implements IMapper interface.</param>
+        /// <param name="jwnHandler">Instance that implements IJwtHandler interface.</param>
+        public UserService(IUnitOfWork unitOfWork, UserManager<User> userManager, SignInManager<User> signInManager, IMapper mapper, IJwtHandler jwnHandler) : base(unitOfWork, mapper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _roleManager = roleManager;
+            _jwnHandler = jwnHandler;
         }
 
         /// <inheritdoc />
-        public async Task<bool> RegistrationAsync(RegistrationModel model)
+        public async Task<UserDto> RegistrationAsync(RegistrationModel model)
         {
             IdentityResult result;
 
             var user = new User
             {
                 Email = model.Email,
-                UserName = model.UserName
+                UserName = model.UserName,
+                BirthDate = model.BirthDate
             };
 
             try
@@ -41,32 +58,51 @@ namespace Business.Services
             }
             catch (DbUpdateException)
             {
-                throw new ForumException("User with the same email already exist.");
+                throw new ForumException("User with the same email already exists.");
             }
 
             if (!result.Succeeded)
             {
-                return false;
+                return null;
             }
 
-            var role = await _roleManager.FindByNameAsync("Registered");
-            if (role != null)
-            {
-                await _userManager.AddToRoleAsync(user, role.Name);
-            }
             await _signInManager.SignInAsync(user, false);
 
-            return true;
+            await _userManager.AddClaimsAsync(user, new[]
+            {
+                new Claim(ClaimTypes.Role, nameof(Roles.Registered))
+            });
+
+            var claims = await _userManager.GetClaimsAsync(user);
+
+            var token = GetToken(claims);
+
+            return new UserDto { Id = user.Id, Token = token };
         }
 
         /// <inheritdoc />
-        public async Task<bool> LoginAsync(LoginModel model)
+        public async Task<UserDto> LoginAsync(LoginModel model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
-            var result = await _signInManager.PasswordSignInAsync(user, model.Password,
-                model.RememberMe, false);
 
-            return result.Succeeded;
+            if (user == null)
+            {
+                throw new ForumException("User doesn't exist.");
+            }
+
+            var result = await _signInManager.PasswordSignInAsync(user, model.Password,
+                false, false);
+
+            if (!result.Succeeded)
+            {
+                throw new ForumException("Incorrect user's data.");
+            }
+
+            var claims = await _userManager.GetClaimsAsync(user);
+
+            var token = GetToken(claims);
+
+            return new UserDto { Id = user.Id, Token = token };
         }
 
         /// <inheritdoc />
@@ -78,7 +114,7 @@ namespace Business.Services
         /// <inheritdoc />
         public async Task<UserModel> GetByIdAsync(int userId)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString());
+            var user = await UnitOfWork.UserRepository.GetByIdWithDetailsAsync(userId);
 
             if (user == null)
             {
@@ -95,15 +131,37 @@ namespace Business.Services
 
             user.Karma = topicsRating + commentsRating;
 
-            return Mapper.Map<UserModel>(user);
+            var claims = await _userManager.GetClaimsAsync(user);
+            var token = GetToken(claims);
+
+            var model = Mapper.Map<UserModel>(user);
+            model.Token = token;
+
+            foreach (var topicModel in model.PostModels)
+            {
+                topicModel.CommentModels = null;
+            }
+
+            return model;
         }
 
         /// <inheritdoc />
         public async Task UpdateAsync(UserModel model)
         {
-            var user = Mapper.Map<User>(model);
+            var user = await _userManager.FindByIdAsync(model.Id.ToString());
+
+            user.UserName = model.UserName;
+            user.BirthDate = Convert.ToDateTime(model.BirthDate);
+
             await _userManager.UpdateAsync(user);
-            await UnitOfWork.SaveAsync();
+        }
+
+        private string GetToken(IEnumerable<Claim> claims)
+        {
+            var signInCredentials = _jwnHandler.GetSigningCredentials();
+            var tokenOptions = _jwnHandler.GenerateTokenOptions(signInCredentials, claims);
+            var token = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+            return token;
         }
     }
 }

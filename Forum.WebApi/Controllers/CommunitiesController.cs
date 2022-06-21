@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Security.Claims;
+using System.Threading.Tasks;
 using AutoMapper;
 using Business.Interfaces;
 using Business.MapModels;
@@ -34,7 +35,7 @@ namespace Forum.WebApi.Controllers
         }
 
         [HttpGet("{id:int}/users")]
-        [Authorize(Roles = "Moderator")]
+        [Authorize(Policy = "ModeratorOnly")]
         public async Task<IActionResult> GetAllUsers(int id)
         {
             return Ok(await _communityService.GetAllUsers(id));
@@ -48,7 +49,7 @@ namespace Forum.WebApi.Controllers
         }
 
         [HttpPut]
-        [Authorize(Roles = "Moderator")]
+        [Authorize(Policy = "ModeratorOnly")]
         public async Task<IActionResult> Update(UpdateCommunityDto model)
         {
             await _communityService.UpdateAsync(Mapper.Map<CommunityModel>(model));
@@ -56,14 +57,14 @@ namespace Forum.WebApi.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        [Authorize(Roles = "Moderator")]
+        [Authorize(Policy = "ModeratorOnly")]
         public async Task Delete(int id)
         {
             await _communityService.DeleteAsync(id);
         }
 
         [HttpPost("add-moderator")]
-        [Authorize(Roles = "Moderator")]
+        [Authorize(Policy = "ModeratorOnly")]
         public async Task<IActionResult> AddModerator(int userId, int communityId)
         {
             await _communityService.AddModeratorAsync(userId, communityId);
@@ -71,7 +72,7 @@ namespace Forum.WebApi.Controllers
         }
 
         [HttpDelete("remove-moderator")]
-        [Authorize(Roles = "Moderator")]
+        [Authorize(Policy = "ModeratorOnly")]
         public async Task<IActionResult> RemoveModerator(int userId, int communityId)
         {
             await _communityService.RemoveModeratorAsync(userId, communityId);
@@ -94,17 +95,15 @@ namespace Forum.WebApi.Controllers
             return Ok();
         }
 
-        [HttpPost("{communityId:int}/add-rule")]
-        [Authorize(Roles = "Moderator")]
-        public async Task<IActionResult> AddRule(int communityId, CreateRuleDto model)
+        [HttpPost("add-rule")]
+        [Authorize(Policy = "ModeratorOnly")]
+        public async Task<IActionResult> AddRule(CreateRuleDto model)
         {
-            model.CommunityId = communityId;
-            await _ruleService.AddAsync(Mapper.Map<RuleModel>(model));
-            return Ok();
+            return Ok(await _ruleService.AddAsync(Mapper.Map<RuleModel>(model)));
         }
 
         [HttpPut("update-rule")]
-        [Authorize(Roles = "Moderator")]
+        [Authorize(Policy = "ModeratorOnly")]
         public async Task<IActionResult> UpdateRule(UpdateRuleDto model)
         {
             await _ruleService.UpdateAsync(Mapper.Map<RuleModel>(model));
@@ -112,7 +111,7 @@ namespace Forum.WebApi.Controllers
         }
 
         [HttpDelete("delete-rule/{ruleId:int}")]
-        [Authorize(Roles = "Moderator")]
+        [Authorize(Policy = "ModeratorOnly")]
         public async Task DeleteRule(int ruleId)
         {
             await _ruleService.DeleteAsync(ruleId);

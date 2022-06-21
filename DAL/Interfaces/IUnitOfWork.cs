@@ -22,6 +22,8 @@ namespace Data.Interfaces
         /// <inheritdoc cref="IUserCommunityRepository"/>
         public IUserCommunityRepository UserCommunityRepository { get; }
 
+        public IUserRepository UserRepository { get; }
+
         /// <summary>
         /// Saves changes in the database.
         /// </summary>

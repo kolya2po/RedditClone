@@ -21,9 +21,9 @@ namespace Forum.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(CreateCommentDto model)
+        public async Task Add(CreateCommentDto model)
         {
-            return Ok(await _commentService.AddAsync(Mapper.Map<CommentModel>(model)));
+            await _commentService.AddAsync(Mapper.Map<CommentModel>(model));
         }
 
         [HttpPut]
@@ -40,9 +40,9 @@ namespace Forum.WebApi.Controllers
         }
 
         [HttpPost("{commentId:int}/reply")]
-        public async Task<IActionResult> ReplyToComment(int commentId, CreateCommentDto model)
+        public async Task ReplyToComment(int commentId, CreateCommentDto model)
         {
-            return Ok(await _commentService.ReplyToCommentAsync(commentId, Mapper.Map<CommentModel>(model)));
+            await _commentService.ReplyToCommentAsync(commentId, Mapper.Map<CommentModel>(model));
         }
 
         [HttpPut("{id:int}/increase-rating")]

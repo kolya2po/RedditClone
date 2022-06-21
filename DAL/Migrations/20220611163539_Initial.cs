@@ -232,13 +232,13 @@ namespace Data.Migrations
                         column: x => x.AuthorId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_Topics_Communities_CommunityId",
                         column: x => x.CommunityId,
                         principalTable: "Communities",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -286,13 +286,15 @@ namespace Data.Migrations
                         column: x => x.AuthorId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Cascade,
+                        onUpdate: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_Comments_Topics_TopicId",
                         column: x => x.TopicId,
                         principalTable: "Topics",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade,
+                        onUpdate: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.InsertData(
@@ -304,16 +306,6 @@ namespace Data.Migrations
                     { 2, "6eac4ad2-daab-402a-b864-691d05008f02", "Moderator", "MODERATOR" },
                     { 3, "1d5a0c83-6a6c-4406-8880-ea3e51c22e01", "Administrator", "ADMINISTRATOR" }
                 });
-
-            migrationBuilder.InsertData(
-                table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "BirthDate", "ConcurrencyStamp", "CreatedCommunityId", "Email", "EmailConfirmed", "Karma", "LockoutEnabled", "LockoutEnd", "ModeratedCommunityId", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { 1, 0, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "c5bc7f0d-9a4b-4d64-91b0-bee35a517361", null, "admin@email.com", true, 0, false, null, null, "ADMIN@EMAIL.COM", "ADMIN", "AQAAAAEAACcQAAAAEKewyerrw74gL9+VJ3WzuIgyJGHnoGNlFGdQQgtY6I1l0qt2TPi3uOu91Qb9dRJe/A==", null, false, null, false, "admin" });
-
-            migrationBuilder.InsertData(
-                table: "AspNetUserRoles",
-                columns: new[] { "UserId", "RoleId" },
-                values: new object[] { 1, 3 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

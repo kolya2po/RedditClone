@@ -6,6 +6,7 @@ namespace Forum.WebApi.Models.Rule
     {
         [Required(ErrorMessage = "Rule's id should be provided.")]
         public int Id { get; set; }
+        public int CommunityId { get; set; }
         public string Title { get; set; }
         public string RuleText { get; set; }
     }
