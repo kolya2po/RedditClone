@@ -31,7 +31,8 @@ namespace Forum.Tests.BusinessTests
             // Assert
             actual.Should().BeEquivalentTo(expected, opt =>
             {
-                return opt.Excluding(c => c.CommentModels);
+                return opt.Excluding(c => c.CommentModels)
+                    .Excluding(c => c.PostingDate);
             });
         }
 
@@ -50,7 +51,11 @@ namespace Forum.Tests.BusinessTests
             var actual = await topicService.GetByIdAsync(1);
 
             // Assert
-            actual.Should().BeEquivalentTo(expected);
+            actual.Should().BeEquivalentTo(expected, opt =>
+            {
+                return opt.Excluding(c => c.CommentModels)
+                    .Excluding(c => c.PostingDate);
+            });
         }
 
         [Test]
@@ -100,6 +105,82 @@ namespace Forum.Tests.BusinessTests
 
             // Assert
             mockUnitOfWork.Verify(u => u.TopicRepository.DeleteByIdAsync(1), Times.Once);
+            mockUnitOfWork.Verify(u => u.SaveAsync(), Times.Once);
+        }
+
+        [Test]
+        public async Task IncreaseRatingAsync_IncreasesTopicsRating()
+        {
+            // Arrange
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(u => u.TopicRepository.GetByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync(GetTestTopic);
+            mockUnitOfWork.Setup(u => u.TopicRepository.Update(It.IsAny<Topic>()));
+            var topicService = new TopicService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile());
+
+            // Act
+            await topicService.IncreaseRatingAsync(1);
+
+            // Assert
+            mockUnitOfWork.Verify(u => u.TopicRepository
+                .Update(It.Is<Topic>(t => t.Id == 1 && t.Rating == GetTestTopic.Rating + 1)), Times.Once);
+            mockUnitOfWork.Verify(u => u.SaveAsync(), Times.Once);
+        }
+
+        [Test]
+        public async Task DecreaseRatingAsync_DecreasesTopicsRating()
+        {
+            // Arrange
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(u => u.TopicRepository.GetByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync(GetTestTopic);
+            mockUnitOfWork.Setup(u => u.TopicRepository.Update(It.IsAny<Topic>()));
+            var topicService = new TopicService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile());
+
+            // Act
+            await topicService.DecreaseRatingAsync(1);
+
+            // Assert
+            mockUnitOfWork.Verify(u => u.TopicRepository
+                .Update(It.Is<Topic>(t => t.Id == 1 && t.Rating == GetTestTopic.Rating - 1)), Times.Once);
+            mockUnitOfWork.Verify(u => u.SaveAsync(), Times.Once);
+        }
+
+        [Test]
+        public async Task PinTopicAsync_PinsTopic()
+        {
+            // Arrange
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(u => u.TopicRepository.GetByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync(GetTestTopic);
+            mockUnitOfWork.Setup(u => u.TopicRepository.Update(It.IsAny<Topic>()));
+            var topicService = new TopicService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile());
+
+            // Act
+            await topicService.PinTopicAsync(1);
+
+            // Assert
+            mockUnitOfWork.Verify(u => u.TopicRepository
+                .Update(It.Is<Topic>(t => t.Id == 1 && t.IsPinned)), Times.Once);
+            mockUnitOfWork.Verify(u => u.SaveAsync(), Times.Once);
+        }
+
+        [Test]
+        public async Task UnpinTopicAsync_UnpinsTopic()
+        {
+            // Arrange
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(u => u.TopicRepository.GetByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync(GetTestTopic);
+            mockUnitOfWork.Setup(u => u.TopicRepository.Update(It.IsAny<Topic>()));
+            var topicService = new TopicService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile());
+
+            // Act
+            await topicService.UnpinTopicAsync(1);
+
+            // Assert
+            mockUnitOfWork.Verify(u => u.TopicRepository
+                .Update(It.Is<Topic>(t => t.Id == 1 && !t.IsPinned)), Times.Once);
             mockUnitOfWork.Verify(u => u.SaveAsync(), Times.Once);
         }
 

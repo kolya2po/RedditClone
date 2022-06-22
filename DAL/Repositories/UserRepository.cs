@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Data.Repositories
 {
     /// <summary>
-    /// Extends BaseRepository class and implements IUserRepository interface.
+    /// Represents repository that encapsulates operations with users db table.
     /// </summary>
     public class UserRepository : BaseRepository, IUserRepository
     {

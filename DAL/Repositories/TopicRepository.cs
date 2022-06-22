@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Data.Repositories
 {
     /// <summary>
-    /// Extends BaseRepository class and implements ITopicRepository interface.
+    /// Represents repository that encapsulates operations with topics db table.
     /// </summary>
     public class TopicRepository : BaseRepository, ITopicRepository
     {

@@ -5,6 +5,7 @@ using Forum.WebApi.ErrorHandling;
 using Forum.WebApi.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -39,6 +40,11 @@ namespace Forum.WebApi
             });
 
             services.AddControllers();
+
+            services.AddSpaStaticFiles(config =>
+            {
+                config.RootPath = "ForumClient/dist";
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -61,6 +67,16 @@ namespace Forum.WebApi
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+
+            app.UseSpa(config =>
+            {
+                config.Options.SourcePath = "ForumClient";
+
+                if (env.IsDevelopment())
+                {
+                    config.UseAngularCliServer(npmScript: "ng serve -o");
+                }
             });
         }
     }

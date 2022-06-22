@@ -27,11 +27,6 @@ namespace Data.Models
         public int? CreatedCommunityId { get; set; }
 
         /// <summary>
-        /// Navigation property, refers to community that has been created by user.
-        /// </summary>
-        public Community CreatedCommunity { get; set; }
-
-        /// <summary>
         /// Id of community that moderated by user.
         /// </summary>
 

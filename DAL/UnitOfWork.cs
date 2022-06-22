@@ -5,7 +5,8 @@ using Data.Repositories;
 namespace Data
 {
     /// <summary>
-    /// Implements IUnitOfWork interface.
+    /// Represents unit of work that encapsulates all repositories.
+    /// Provides access to the DAL.
     /// </summary>
     public class UnitOfWork : IUnitOfWork
     {

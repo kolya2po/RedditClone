@@ -11,7 +11,7 @@
         protected readonly ForumDbContext DbContext;
 
         /// <summary>
-        /// Initializes a new instance of the BaseRepository. Also initializes DbContext field.
+        /// Initializes a new instance of the class. Also initializes class's field.
         /// </summary>
         /// <param name="dbContext">Instance of the ForumDbContext class.</param>
         protected BaseRepository(ForumDbContext dbContext)

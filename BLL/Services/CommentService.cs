@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Business.Interfaces;
@@ -10,8 +9,12 @@ using Data.Models;
 
 namespace Business.Services
 {
+    /// <summary>
+    /// Represents service that works with comments.
+    /// </summary>
     public class CommentService : BaseService, ICommentService
     {
+        /// <inheritdoc />
         public CommentService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
         {
         }
@@ -19,8 +22,6 @@ namespace Business.Services
         /// <inheritdoc />
         public async Task AddAsync(CommentModel model)
         {
-            ValidateCommentModel(model);
-
             model.PostingDate = $"{DateTime.Now.ToShortDateString()} {DateTime.Now.ToShortTimeString()}";
             await UnitOfWork.CommentRepository.AddAsync(Mapper.Map<Comment>(model));
             await UnitOfWork.SaveAsync();
@@ -29,7 +30,6 @@ namespace Business.Services
         /// <inheritdoc />
         public async Task UpdateAsync(CommentModel model)
         {
-            ValidateCommentModel(model);
             UnitOfWork.CommentRepository.Update(Mapper.Map<Comment>(model));
             await UnitOfWork.SaveAsync();
         }
@@ -42,6 +42,7 @@ namespace Business.Services
         }
 
         /// <inheritdoc />
+        /// <exception cref="ForumException">Throws if comment to be replied doesn't exist.</exception>
         public async Task ReplyToCommentAsync(int commentId, CommentModel model)
         {
             var comment = await UnitOfWork.CommentRepository.GetByIdWithDetailsAsync(commentId);
@@ -58,6 +59,7 @@ namespace Business.Services
         }
 
         /// <inheritdoc />
+        /// <exception cref="ForumException">Throws if comment which rating to be increased doesn't exist.</exception>
         public async Task IncreaseRatingAsync(int commentId)
         {
             var comment = await UnitOfWork.CommentRepository.GetByIdAsync(commentId);
@@ -73,6 +75,7 @@ namespace Business.Services
         }
 
         /// <inheritdoc />
+        /// <exception cref="ForumException">Throws if comment which rating to be decreased doesn't exist.</exception>
         public async Task DecreaseRatingAsync(int commentId)
         {
             var comment = await UnitOfWork.CommentRepository.GetByIdAsync(commentId);
@@ -84,13 +87,6 @@ namespace Business.Services
             comment.Rating--;
             UnitOfWork.CommentRepository.Update(comment);
             await UnitOfWork.SaveAsync();
-        }
-        private static void ValidateCommentModel(CommentModel model)
-        {
-            if (model == null)
-            {
-                throw new ForumException("Passed model was equal null");
-            }
         }
     }
 }

@@ -11,6 +11,9 @@ using Data.Models;
 
 namespace Business.Services
 {
+    /// <summary>
+    /// Represents service that works with topics.
+    /// </summary>
     public class TopicService : BaseService, ITopicService
     {
         /// <inheritdoc />
@@ -43,11 +46,6 @@ namespace Business.Services
         /// <inheritdoc />
         public async Task<TopicModel> AddAsync(TopicModel model)
         {
-            if (model == null)
-            {
-                throw new ForumException("Passed model was equal null.");
-            }
-
             model.PostingDate = $"{DateTime.Now.ToShortDateString()} {DateTime.Now.ToShortTimeString()}";
             await UnitOfWork.TopicRepository.AddAsync(Mapper.Map<Topic>(model));
             await UnitOfWork.SaveAsync();
@@ -58,11 +56,6 @@ namespace Business.Services
         /// <inheritdoc />
         public async Task UpdateAsync(TopicModel model)
         {
-            if (model == null)
-            {
-                throw new ForumException("Passed model was equal null.");
-            }
-
             UnitOfWork.TopicRepository.Update(Mapper.Map<Topic>(model));
             await UnitOfWork.SaveAsync();
         }
@@ -75,6 +68,7 @@ namespace Business.Services
         }
 
         /// <inheritdoc />
+        /// <exception cref="ForumException">Throws if topic doesn't exist.</exception>
         public async Task IncreaseRatingAsync(int topicId)
         {
             var topic = await UnitOfWork.TopicRepository.GetByIdAsync(topicId);
@@ -90,6 +84,7 @@ namespace Business.Services
         }
 
         /// <inheritdoc />
+        /// <exception cref="ForumException">Throws if topic doesn't exist.</exception>
         public async Task DecreaseRatingAsync(int topicId)
         {
             var topic = await UnitOfWork.TopicRepository.GetByIdAsync(topicId);
@@ -105,6 +100,7 @@ namespace Business.Services
         }
 
         /// <inheritdoc />
+        /// <exception cref="ForumException">Throws if topic doesn't exist.</exception>
         public async Task PinTopicAsync(int topicId)
         {
             var topic = await UnitOfWork.TopicRepository.GetByIdAsync(topicId);
@@ -120,6 +116,7 @@ namespace Business.Services
         }
 
         /// <inheritdoc />
+        /// <exception cref="ForumException">Throws if topic doesn't exist.</exception>
         public async Task UnpinTopicAsync(int topicId)
         {
             var topic = await UnitOfWork.TopicRepository.GetByIdAsync(topicId);
@@ -135,6 +132,7 @@ namespace Business.Services
         }
 
         /// <inheritdoc />
+        /// <exception cref="ForumException">Throws if topic doesn't exist.</exception>
         public async Task BlockCommentsAsync(int topicId)
         {
             var topic = await UnitOfWork.TopicRepository.GetByIdAsync(topicId);

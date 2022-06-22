@@ -21,7 +21,7 @@ namespace Forum.Tests.BusinessTests
             mockUnitOfWork.Setup(u => u.CommentRepository.AddAsync(It.IsAny<Comment>()));
             var commentService = new CommentService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile());
 
-            var commentModel = GetTestCommentModels().First();
+            var commentModel = GetTestCommentModels.First();
 
             // Act
             await commentService.AddAsync(commentModel);
@@ -38,7 +38,7 @@ namespace Forum.Tests.BusinessTests
             var mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(u => u.CommentRepository.Update(It.IsAny<Comment>()));
             var commentService = new CommentService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile());
-            var commentModel = GetTestCommentModels().First();
+            var commentModel = GetTestCommentModels.First();
 
             // Act
             await commentService.UpdateAsync(commentModel);
@@ -64,52 +64,86 @@ namespace Forum.Tests.BusinessTests
             mockUnitOfWork.Verify(u => u.SaveAsync(), Times.Once);
         }
 
-        //[TestCase(1)]
-        //public async Task GetAllFromTopicAsync_ReturnsCommentsThatBelongToTopic(int topicId)
-        //{
-        //    // Arrange
-        //    var mockUnitOfWork = new Mock<IUnitOfWork>();
-        //    var topic = new Topic
-        //    {
-        //        Id = topicId,
-        //        Comments = UnitTestHelper.GetTestComments()
-        //    };
-        //    mockUnitOfWork.Setup(u => u.TopicRepository
-        //            .GetByIdWithDetailsAsync(topicId))
-        //            .ReturnsAsync(topic);
-        //    var commentService = new CommentService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile(), null);
-        //    var expected = GetTestCommentModels();
+        [TestCase(1)]
+        public async Task ReplyToCommentAsync_CreatesNewCommentAsReply(int id)
+        {
+            // Arrange
+            var expected = new Comment
+            {
+                Id = id,
+                Rating = 1,
+                Text = "Comment1 Text",
+                AuthorId = 1,
+                Author = new User { Id = 1, UserName = "Author 1" },
+                TopicId = 1
+            };
+            var reply = GetTestCommentModels.First();
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(uof =>
+                uof.CommentRepository.GetByIdWithDetailsAsync(id)).ReturnsAsync(expected);
+            var commentService = new CommentService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile());
 
-        //    // Act
-        //    var actual = await commentService.GetAllFromTopicAsync(topicId);
+            // Act
+            await commentService.ReplyToCommentAsync(id, reply);
 
-        //    // Assert
-        //    actual.Should().BeEquivalentTo(expected);
-        //}
+            // Assert
+            mockUnitOfWork.Verify(uof => uof.CommentRepository
+                .AddAsync(It.Is<Comment>(c => c.Id == reply.Id)), Times.Once);
+            mockUnitOfWork.Verify(uof => uof.SaveAsync(), Times.Once);
+        }
 
-        //[TestCase(1)]
-        //public async Task GetAllFromUserAsync_ReturnsAllCommentsThatBelongToUser(int userId)
-        //{
-        //    // Arrange
-        //    var user = new User
-        //    {
-        //        Id = userId,
-        //        Comments = UnitTestHelper.GetTestComments().Where(c => c.AuthorId == userId)
-        //    };
-        //    var mockUserManager = UnitTestHelper.GetMockUserManager();
-        //    mockUserManager.Setup(u => u.FindByIdAsync(userId.ToString()))
-        //        .ReturnsAsync(user);
-        //    var commentService = new CommentService(null, UnitTestHelper.CreateMapperFromProfile(), mockUserManager.Object);
-        //    var expected = GetTestCommentModels().Where(c => c.AuthorId == userId);
-        //    // Act
-        //    var actual = await commentService.GetAllFromUserAsync(userId);
+        [TestCase(1)]
+        public async Task IncreaseRatingAsync_IncreasesCommentsRating(int id)
+        {
+            // Arrange
+            var expected = new Comment
+            {
+                Id = id,
+                Rating = 1,
+                Text = "Comment1 Text",
+                AuthorId = 1,
+                TopicId = 1
+            };
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(uof => uof.CommentRepository.GetByIdAsync(id)).ReturnsAsync(expected);
+            var commentService = new CommentService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile());
 
-        //    // Assert
-        //    actual.Should().BeEquivalentTo(expected);
-        //}
+            // Act
+            await commentService.IncreaseRatingAsync(id);
+
+            // Assert
+            mockUnitOfWork.Verify(uof => uof.CommentRepository
+                .Update(It.Is<Comment>(c => c.Id == expected.Id)), Times.Once);
+            mockUnitOfWork.Verify(uof => uof.SaveAsync(), Times.Once);
+        }
+
+        [TestCase(1)]
+        public async Task DecreaseRatingAsync_DecreasesCommentsRating(int id)
+        {
+            // Arrange
+            var expected = new Comment
+            {
+                Id = id,
+                Rating = 1,
+                Text = "Comment1 Text",
+                AuthorId = 1,
+                TopicId = 1
+            };
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(uof => uof.CommentRepository.GetByIdAsync(id)).ReturnsAsync(expected);
+            var commentService = new CommentService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile());
+
+            // Act
+            await commentService.DecreaseRatingAsync(id);
+
+            // Assert
+            mockUnitOfWork.Verify(uof => uof.CommentRepository
+                .Update(It.Is<Comment>(c => c.Id == expected.Id)), Times.Once);
+            mockUnitOfWork.Verify(uof => uof.SaveAsync(), Times.Once);
+        }
 
 
-        private static IEnumerable<CommentModel> GetTestCommentModels() =>
+        private static IEnumerable<CommentModel> GetTestCommentModels =>
             new[]
             {
                 new CommentModel

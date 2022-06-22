@@ -10,17 +10,6 @@ namespace Data
     /// </summary>
     public class ForumDbContext : IdentityDbContext<User, IdentityRole<int>, int>
     {
-        public ForumDbContext()
-        {
-        }
-
-        /// <inheritdoc />
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseSqlServer("Server=KOLYAPC\\SQLEXPRESS;Database=forumdb;Trusted_Connection=true;");
-        }
-
         /// <summary>
         /// Initializes a new instance of the ForumDbContext.
         /// </summary>

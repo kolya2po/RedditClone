@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Data.Repositories
 {
     /// <summary>
-    /// Extends BaseRepository class and implements ICommunityRepository interface.
+    /// Represents repository that encapsulates operations with communities db table.
     /// </summary>
     public class CommunityRepository : BaseRepository, ICommunityRepository
     {

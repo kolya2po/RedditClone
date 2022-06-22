@@ -20,10 +20,5 @@
         /// </summary>
 
         public int  CommunityId { get; set; }
-
-        /// <summary>
-        /// Navigation property, refers to community.
-        /// </summary>
-        public Community Community { get; set; }
     }
 }

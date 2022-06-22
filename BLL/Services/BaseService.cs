@@ -20,10 +20,10 @@ namespace Business.Services
 
         /// <summary>
         /// Initializes a new instance of the BaseRepository.
-        /// Also initializes UnitOfWork and Mapper fields.
+        /// Also initializes class's fields.
         /// </summary>
-        /// <param name="unitOfWork">Instance of the IUnitOfWork interface.</param>
-        /// <param name="mapper">Instance of the IMapper interface.</param>
+        /// <param name="unitOfWork">Instance of the UnitOfWork class.</param>
+        /// <param name="mapper">Instance of the Mapper class.</param>
         protected BaseService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             UnitOfWork = unitOfWork;

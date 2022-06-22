@@ -7,6 +7,9 @@ using Data.Models;
 
 namespace Business.Services
 {
+    /// <summary>
+    /// Represents service that works with rules.
+    /// </summary>
     public class RuleService : BaseService, IRuleService
     {
         /// <inheritdoc />

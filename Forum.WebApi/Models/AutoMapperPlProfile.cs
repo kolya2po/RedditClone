@@ -9,8 +9,12 @@ using Forum.WebApi.Models.Topic;
 
 namespace Forum.WebApi.Models
 {
+    /// <inheritdoc />
     public class AutoMapperPlProfile : Profile
     {
+        /// <summary>
+        /// Configures mapping between DTOs and business models.
+        /// </summary>
         public AutoMapperPlProfile()
         {
             CreateMap<CreateCommunityDto, CommunityModel>().ReverseMap();

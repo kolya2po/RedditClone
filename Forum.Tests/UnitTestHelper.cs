@@ -45,18 +45,17 @@ namespace Forum.Tests
             mgr.Object.PasswordValidators.Add(new PasswordValidator<User>());
             return mgr;
         }
+
         public static Mock<SignInManager<User>> GetMockSignInManager()
         {
-            var userManagerMock = new Mock<UserManager<User>>(
-                Mock.Of<IUserStore<User>>(), null, null, null, null, null, null, null, null);
-
             var signInManagerMock = new Mock<SignInManager<User>>(
-                userManagerMock.Object,
-                 new Mock<IHttpContextAccessor>().Object,
-                 new Mock<IUserClaimsPrincipalFactory<User>>().Object,
-                 new Mock<IOptions<IdentityOptions>>().Object,
-                 new Mock<ILogger<SignInManager<User>>>().Object,
-                 new Mock<IAuthenticationSchemeProvider>().Object);
+                new Mock<UserManager<User>>().Object,
+                Mock.Of<IHttpContextAccessor>(),
+                Mock.Of<IUserClaimsPrincipalFactory<User>>(),
+                null,
+                null,
+                null,
+                Mock.Of<IUserConfirmation<User>>());
 
             return signInManagerMock;
         }

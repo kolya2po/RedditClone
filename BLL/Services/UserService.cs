@@ -17,7 +17,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Business.Services
 {
     /// <summary>
-    /// Extends class BaseService and implements IUserService interface.
+    /// Represents service that works with users.
     /// </summary>
     public class UserService : BaseService, IUserService
     {
@@ -41,6 +41,7 @@ namespace Business.Services
         }
 
         /// <inheritdoc />
+        /// <exception cref="ForumException">Throws if user with the same email already exists.</exception>
         public async Task<UserDto> RegistrationAsync(RegistrationModel model)
         {
             IdentityResult result;
@@ -81,6 +82,8 @@ namespace Business.Services
         }
 
         /// <inheritdoc />
+        /// <exception cref="ForumException">Throws if user doesn't exist.</exception>
+        /// <exception cref="ForumException">Throws if user has input wrong credentials.</exception>
         public async Task<UserDto> LoginAsync(LoginModel model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
@@ -112,6 +115,7 @@ namespace Business.Services
         }
 
         /// <inheritdoc />
+        /// <exception cref="ForumException">Throws if user doesn't exist.</exception>
         public async Task<UserModel> GetByIdAsync(int userId)
         {
             var user = await UnitOfWork.UserRepository.GetByIdWithDetailsAsync(userId);

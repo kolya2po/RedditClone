@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Data.Repositories
 {
     /// <summary>
-    /// Extends BaseRepository class and implements IRuleRepository interface.
+    /// Represents repository that encapsulates operations with rules db table.
     /// </summary>
     public class RuleRepository : BaseRepository, IRuleRepository
     {
@@ -31,7 +31,6 @@ namespace Data.Repositories
         /// <inheritdoc />
         public async Task AddAsync(Rule entity)
         {
-            entity.Community = null;
             await DbContext.Rules.AddAsync(entity);
         }
 
@@ -55,7 +54,6 @@ namespace Data.Repositories
         /// <inheritdoc />
         public void Update(Rule entity)
         {
-            entity.Community = null;
             DbContext.Rules.Update(entity);
         }
     }

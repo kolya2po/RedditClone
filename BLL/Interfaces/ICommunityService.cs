@@ -12,10 +12,11 @@ namespace Business.Interfaces
     {
         /// <summary>
         /// Returns asynchronously all mapped from users entities models of type UserModel that belong to the community.
+        /// Also sets to nul some of the models fields, because of optimization.
         /// </summary>
         /// <param name="communityId">Community's id.</param>
         /// <returns>Task that encapsulates collection of mapped models.</returns>
-        Task<IEnumerable<UserModel>> GetAllUsers(int communityId);
+        Task<IEnumerable<UserModel>> GetAllUsersAsync(int communityId);
 
         /// <summary>
         /// Adds asynchronously the moderator to the community.

@@ -14,10 +14,21 @@ using System.Threading.Tasks;
 
 namespace Business.Services
 {
+    /// <summary>
+    /// Represents service that works with communities.
+    /// </summary>
     public class CommunityService : BaseService, ICommunityService
     {
         private readonly UserManager<User> _userManager;
-        /// <inheritdoc />
+
+        /// <summary>
+        /// Initializes a new instance of the CommunityService.
+        /// Also initializes class's fields.
+        /// </summary>
+        /// <param name="unitOfWork">Instance of the UnitOfWork class.</param>
+        /// <param name="mapper">Instance of the Mapper class.</param>
+        /// <param name="userManager">Instance of the UserManager&lt;int&gt; class.</param>
+
         public CommunityService(IUnitOfWork unitOfWork, UserManager<User> userManager, IMapper mapper) : base(unitOfWork, mapper)
         {
             _userManager = userManager;
@@ -31,7 +42,13 @@ namespace Business.Services
             return Mapper.Map<IEnumerable<CommunityModel>>(communities);
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Returns asynchronously, mapped the from entity with specified id, model of type CommunityModel.
+        /// Sets some of model's fields to null, because of optimization.
+        /// Those fields aren't needed on the UI.
+        /// </summary>
+        /// <param name="id">Model's id.</param>
+        /// <returns>Task that encapsulates mapped model.</returns>
         public async Task<CommunityModel> GetByIdAsync(int id)
         {
             var community = await UnitOfWork.CommunityRepository.GetByIdWithDetailsAsync(id);
@@ -53,13 +70,11 @@ namespace Business.Services
         }
 
         /// <inheritdoc />
+        /// <exception cref="ForumException">Throws if user doesn't exist.</exception>
+        /// <exception cref="ForumException">Throws if user has already created community.</exception>
+        /// <exception cref="ForumException">Throws if community with the same title already exist.</exception>
         public async Task<CommunityModel> AddAsync(CommunityModel model)
         {
-            if (model == null)
-            {
-                throw new ForumException("Passed model was equal null.");
-            }
-
             var user = await _userManager.FindByIdAsync(model.CreatorId.ToString());
 
             if (user == null)
@@ -91,16 +106,12 @@ namespace Business.Services
         /// <inheritdoc />
         public async Task UpdateAsync(CommunityModel model)
         {
-            if (model == null)
-            {
-                throw new ForumException("Passed model was equal null.");
-            }
-
             UnitOfWork.CommunityRepository.Update(Mapper.Map<Community>(model));
             await UnitOfWork.SaveAsync();
         }
 
         /// <inheritdoc />
+        /// <exception cref="ForumException">Throws if user doesn't exist.</exception>
         public async Task DeleteAsync(int modelId)
         {
             var community = await UnitOfWork.CommunityRepository.GetByIdAsync(modelId);
@@ -119,7 +130,8 @@ namespace Business.Services
         }
 
         /// <inheritdoc />
-        public async Task<IEnumerable<UserModel>> GetAllUsers(int communityId)
+        /// <exception cref="ForumException">Throws if community doesn't exist.</exception>
+        public async Task<IEnumerable<UserModel>> GetAllUsersAsync(int communityId)
         {
             var community = await UnitOfWork.CommunityRepository.GetByIdWithDetailsAsync(communityId);
 
@@ -140,6 +152,8 @@ namespace Business.Services
         }
 
         /// <inheritdoc />
+        /// <exception cref="ForumException">Throws if user doesn't exist.</exception>
+        ///  /// <exception cref="ForumException">Throws if user already moderates community.</exception>
         public async Task AddModeratorAsync(int userId, int communityId)
         {
             var user = await _userManager.FindByIdAsync(userId.ToString());

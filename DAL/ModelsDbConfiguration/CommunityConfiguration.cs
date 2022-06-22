@@ -17,11 +17,11 @@ namespace Data.ModelsDbConfiguration
                 .IsUnique();
 
             builder.HasMany(c => c.Rules)
-                .WithOne(r => r.Community)
+                .WithOne()
                 .HasForeignKey(r => r.CommunityId);
 
             builder.HasOne(c => c.Creator)
-                .WithOne(u => u.CreatedCommunity)
+                .WithOne()
                 .HasForeignKey<User>(u => u.CreatedCommunityId);
 
             builder.HasMany(c => c.Moderators)
