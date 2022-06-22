@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>50645123-cedc-4ca9-b922-a403bc6995b3</UserSecretsId>
+      <SpaRoot>ForumClient</SpaRoot>
+      <SpaProxyServerUrl>https://localhost:4200</SpaProxyServerUrl>
   </PropertyGroup>
 
   <ItemGroup>

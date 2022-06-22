@@ -1,4 +1,3 @@
-using Business;
 using Business.ServiceConfiguration;
 using Data.ServiceConfiguration;
 using Forum.WebApi.ErrorHandling;
@@ -75,7 +74,7 @@ namespace Forum.WebApi
 
                 if (env.IsDevelopment())
                 {
-                    config.UseAngularCliServer(npmScript: "ng serve -o");
+                    config.UseAngularCliServer(npmScript: "start");
                 }
             });
         }
