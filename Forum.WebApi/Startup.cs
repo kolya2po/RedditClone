@@ -42,7 +42,7 @@ namespace Forum.WebApi
 
             services.AddSpaStaticFiles(config =>
             {
-                config.RootPath = "ForumClient/dist";
+                config.RootPath = "ForumAngularClient/dist";
             });
         }
 
@@ -70,7 +70,7 @@ namespace Forum.WebApi
 
             app.UseSpa(config =>
             {
-                config.Options.SourcePath = "ForumClient";
+                config.Options.SourcePath = "ForumAngularClient";
 
                 if (env.IsDevelopment())
                 {
