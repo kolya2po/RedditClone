@@ -1,0 +1,17 @@
+<div class="header">
+  <a routerLink="/" class="logo">{{title}}</a>
+  <div class="header-right">
+    <a routerLink="/login" *ngIf="us.user.id === 0">Login</a>
+    <a routerLink="/registration" *ngIf="us.user.id === 0">Registration</a>
+    <div *ngIf="us.user.id !== 0">
+      <span class="material-icons" [matMenuTriggerFor]="menu">account_circle</span>
+      <mat-menu #menu="matMenu">
+        <a [routerLink]="['user', us.user.id]" mat-menu-item>Profile</a>
+        <a *ngIf="!us.user.createdCommunityId"
+           routerLink="/create-community"
+           mat-menu-item>Create Community</a>
+        <a (click)="us.logout()" mat-menu-item>Logout</a>
+      </mat-menu>
+    </div>
+  </div>
+</div>

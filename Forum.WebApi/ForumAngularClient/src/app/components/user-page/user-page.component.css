@@ -1,0 +1,302 @@
+.container {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  padding: 2% 2%;
+  gap: 2%;
+}
+
+.posts {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  gap: 1px;
+}
+
+.post {
+  background-color: white;
+  display: grid;
+  grid-template-columns: 40px 2fr;
+}
+
+.filter, .post, .profile, .userComment {
+  border: 1px solid #cdcdcd;
+}
+
+.filter {
+  display: flex;
+  flex-direction: row;
+  align-self: center;
+  gap: 10px;
+  border-radius: 4px;
+  margin-bottom: 1%;
+  user-select: none;
+}
+
+.filter p {
+  margin-right: 5px;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.filter .new {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-weight: 500;
+  border-radius: 4px;
+  padding: 10% 0;
+  cursor: pointer;
+}
+
+.filter .new:hover{
+  background-color: #929292;
+}
+
+.post:hover {
+  border: 1px solid black;
+}
+
+.post a {
+  text-decoration: none;
+  color: black;
+  text-align: center;
+}
+
+.rating {
+  background-color: #cdcdcd;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 2px;
+  user-select: none;
+}
+
+.center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: auto 0;
+  cursor: pointer;
+}
+.material-icons {
+  font-size: 30px;
+}
+
+.rating p {
+  margin-top: -2px;
+  margin-bottom: 0;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.material-icons:hover {
+  font-weight: 600;
+}
+
+.content {
+  padding: 1% 1%;
+  gap: 1%;
+}
+
+.title {
+  font-weight: 400;
+  font-size: 18px;
+}
+
+.creatorInfo {
+  font-size: 13px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.creatorInfo a {
+  font-weight: 500;
+}
+
+.creatorInfo a:hover {
+  text-decoration: underline;
+}
+
+.join {
+  padding: 5px 1%;
+  background-color: #6e6ee7;
+  border-radius: 15px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.join a {
+  color: white;
+  font-weight: 500;
+}
+
+.edit {
+  cursor: pointer;
+}
+.comments {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 500;
+  width: 100%;
+  gap: 10px;
+}
+
+.comment {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2px;
+}
+
+.comment:hover {
+  border-radius: 4px;
+  background-color: #dfdddd;
+}
+
+/* Profile */
+
+.profile {
+  display: flex;
+  flex-direction: column;
+  height: min-content;
+  border-radius: 4px;
+}
+
+.profile .header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: #8484d1;
+  justify-content: center;
+  gap: 10px;
+}
+
+.profile .header span {
+  cursor: pointer;
+  font-size: 22px;
+}
+
+.profile .name {
+  font-size: 25px;
+  font-weight: 400;
+}
+
+.profile .info {
+  display: flex;
+  flex-direction: row;
+  padding: 2% 2%;
+  justify-content: space-between;
+}
+
+.info p {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 400;
+}
+
+.info .bold {
+  font-weight: 500;
+}
+
+.editProfile {
+  border-top: 1px solid #cdcdcd;
+  display: flex;
+  flex-direction: column;
+  padding: 2%;
+  gap: 5px;
+}
+
+.input {
+  display: flex;
+  flex-direction: column;
+}
+
+.input input, button {
+  font-size: 15px;
+  padding: 2% 0;
+}
+
+.input input:hover, button:hover {
+  border: 1px solid blue;
+  border-radius: 2px;
+}
+
+.input button {
+  background-color: #6e6ef2;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+}
+/* User comments */
+
+.userComment {
+  display: flex;
+  flex-direction: column;
+  border-radius: 4px;
+  padding: 1% 1%;
+}
+
+.userComment:hover {
+  border: 1px solid black;
+}
+.userComment a {
+  color: black;
+  text-decoration: none;
+}
+
+.userComment .header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 13px;
+  gap: 3px;
+  margin-bottom: 1%;
+}
+
+.userComment .header p{
+  margin: 0;
+}
+
+.userComment .header a{
+  color: blue;
+}
+
+.userComment .header span a {
+  color: black;
+  text-decoration: none;
+}
+
+.userComment .header span {
+  font-weight: 500;
+}
+.userComment .header span a:hover{
+  text-decoration: underline;
+}
+
+.userComment .text {
+  text-align: justify;
+}
+
+.userComment .editing textarea:hover {
+  border: 1px solid blue;
+  border-radius: 2px;
+}
+
+.userComment .editing textarea {
+  padding: 5px 1%;
+  font-size: 16px;
+  width: 250px;
+  min-height: 50px;
+  max-height: 100px;
+  resize: vertical;
+}
+.userComment .text p {
+  margin: 0;
+}
+
+

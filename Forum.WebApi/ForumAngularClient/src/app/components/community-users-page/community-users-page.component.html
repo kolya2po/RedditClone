@@ -1,0 +1,32 @@
+<div class="header">
+  <a>{{name.toUpperCase()}}</a>
+  <p> / </p>
+  <span><p>USERS</p></span>
+</div>
+<div class="container">
+  <div class="content">
+    <div class="header">
+      <p>Users of {{name}}</p>
+    </div>
+    <div class="search">
+      <input type="text" placeholder="Search for user" [(ngModel)]="search">
+    </div>
+    <div class="user" *ngFor="let u of users | usersFilter:search">
+      <div class="info" [routerLink]="['/user', u?.id]">
+        <span class="material-icons">person</span>
+        <p>{{u?.userName}}</p>
+      </div>
+
+      <div class="right">
+        <p *ngIf="u?.moderatedCommunityId === id">Moderator</p>
+        <a *ngIf="u?.moderatedCommunityId !== id" (click)="deleteUserFromCommunity(u.id)">Delete</a>
+        <a *ngIf="!u?.moderatedCommunityId && u?.moderatedCommunityId !== id"
+           (click)="setModerator(u.id, u)"
+        >Set as moderator</a>
+        <a *ngIf="us.user.createdCommunityId === id && us.user.id !== u.id && !u.moderatedCommunityId"
+           (click)="removeModerator(u.id, u)"
+        >Remove moderation</a>
+      </div>
+    </div>
+  </div>
+</div>

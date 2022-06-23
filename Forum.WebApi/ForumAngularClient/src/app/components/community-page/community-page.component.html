@@ -1,0 +1,125 @@
+<div class="colorArea"></div>
+<div class="communityTitle">
+  <h1>{{community.title}}</h1>
+  <a (click)="join()" *ngIf="showJoin()">Join</a>
+  <a (click)="leave()" *ngIf="showLeave()">Leave</a>
+  <a *ngIf="community.id === us.user.createdCommunityId"
+     style="background-color: #701cc7;">Creator</a>
+  <a *ngIf="community.id === us.user.moderatedCommunityId &&
+            community.id !== us.user.createdCommunityId"
+     style="background-color: #701cc7;">Moderator</a>
+</div>
+<div class="container">
+  <div class="topics">
+
+    <div class="createPost" *ngIf="us.user.id !== 0" (click)="router.navigate(['create-topic', id])">
+      <span class="material-icons">article</span>
+      <input placeholder="Create post">
+    </div>
+
+    <div class="filter">
+      <div class="new" (click)="sortNew()">
+        <span class="material-icons">new_releases</span>
+        <p>New</p>
+      </div>
+      <div class="new" (click)="sortTop()">
+        <span class="material-icons">star</span>
+        <p>Top</p>
+      </div>
+    </div>
+
+    <div class="topic" *ngFor="let t of community.postModels">
+      <div class="rating">
+        <a (click)="increase(t)"><span class="material-icons">keyboard_arrow_up</span></a>
+        <p>{{t.rating}}</p>
+        <a (click)="decrease(t)"><span class="material-icons">keyboard_arrow_down</span></a>
+      </div>
+      <div class="content">
+        <div class="header">
+          <div class="postInfo">
+            <p>Posted by <a [routerLink]="['/user', t.authorId]">{{t.authorName}}</a> {{t.postingDate}}</p>
+          </div>
+          <span *ngIf="t.isPinned" class="material-icons">push_pin</span>
+        </div>
+        <div class="title">
+          <a [routerLink]="['/topic', t.id]">{{t.title}}</a>
+        </div>
+        <div class="comments">
+          <div class="comment" [routerLink]="['/topic', t.id]">
+            <span class="material-icons">question_answer</span>
+            <a>{{t.commentsCount}} Comments</a>
+          </div>
+          <!-- For moderator -->
+          <div class="edit" *ngIf="us.user.moderatedCommunityId == id">
+            <span [matMenuTriggerFor]="menu" class="material-icons">more_horiz</span>
+            <mat-menu #menu="matMenu">
+              <a [routerLink]="['/update-topic', t.id]" mat-menu-item>Edit</a>
+              <button *ngIf="!t.isPinned" (click)="pin(t)" mat-menu-item>Pin</button>
+              <button *ngIf="t.isPinned" (click)="unpin(t)" mat-menu-item>Unpin</button>
+              <button (click)="deleteTopic(t.id)" mat-menu-item>Delete</button>
+            </mat-menu>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="info">
+    <div class="about">
+      <div class="header">
+        <p>About Community</p>
+        <span class="material-icons" *ngIf="us.user.createdCommunityId === id"
+              routerLink="control"
+        >edit</span>
+      </div>
+      <div class="wrap">
+        <div class="title">
+          <p>{{community.title}}</p>
+        </div>
+        <div class="text">
+          <p>{{community.about}}</p>
+        </div>
+        <div class="members" *ngIf="us.user.moderatedCommunityId !== id">
+          <p>Members: <span>{{community.membersCount}}</span></p>
+        </div>
+        <!-- For moderator -->
+        <div class="members" *ngIf="us.user.moderatedCommunityId === id">
+          <p [routerLink]="['/community/users', community.title, id]"
+          >Members: <span>{{community.membersCount}}</span></p>
+        </div>
+        <hr>
+        <div class="created">
+          <span class="material-icons">cake</span>
+          <p>Created {{community.creationDate}}</p>
+        </div>
+
+        <div class="viewAll" *ngIf="us.user.id !== 0">
+          <a (click)="router.navigate(['create-topic', id])">Create post</a>
+        </div>
+
+      </div>
+    </div>
+    <div class="about">
+      <div class="header">
+        <p>{{community.title}} Rules</p>
+      </div>
+      <div class="rule">
+        <mat-expansion-panel *ngFor="let r of community.ruleModels">
+          <mat-expansion-panel-header>
+            <p>{{r.title}}</p>
+          </mat-expansion-panel-header>
+          <p>{{r.ruleText}}</p>
+        </mat-expansion-panel>
+      </div>
+    </div>
+    <div class="about">
+      <div class="header">
+        <p>Moderators</p>
+      </div>
+      <div class="moderators">
+        <div class="moderator" *ngFor="let m of community.moderatorModels; let i = index">
+          <a [routerLink]="['/user', m.id]">{{m.userName}}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

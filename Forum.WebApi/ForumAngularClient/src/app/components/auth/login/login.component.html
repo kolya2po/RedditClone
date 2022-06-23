@@ -1,0 +1,36 @@
+<div class="login">
+  <form #loginForm="ngForm" (ngSubmit)="login()">
+    <div class="text">
+      <h2>Login</h2>
+    </div>
+    <div class="input">
+      <label>Email</label>
+      <input type="email"
+             name="email"
+             [(ngModel)]="model.email"
+             email
+             required
+             #email="ngModel"
+      >
+      <p class="text-danger" *ngIf="!email.valid && email.touched">Email is required</p>
+    </div>
+    <div class="input">
+      <label>Password</label>
+      <input type="password" name="password"
+             [(ngModel)]="model.password"
+             required
+             minlength="5"
+             #password="ngModel"
+      >
+      <p class="text-danger" *ngIf="!password.valid && password.touched">Password is required</p>
+    </div>
+    <div class="input-last">
+      <button type="submit" [disabled]="loginForm.invalid">Submit</button>
+    </div>
+    <div class="register">
+      <p>Don't have account? Register.</p>
+      <a routerLink="/registration">Register</a>
+    </div>
+  </form>
+</div>
+

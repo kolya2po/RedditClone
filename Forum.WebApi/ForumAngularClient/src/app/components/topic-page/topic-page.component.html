@@ -1,0 +1,118 @@
+<div class="container">
+  <div class="header">
+    <div class="rating">
+      <a (click)="increaseTopicRating()"><span class="material-icons">keyboard_arrow_up</span></a>
+      <p>{{topic.rating}}</p>
+      <a (click)="decreaseTopicRating()"><span class="material-icons">keyboard_arrow_down</span></a>
+    </div>
+    <div class="title">
+      <p>{{topic.title}}</p>
+    </div>
+    <div class="close" (click)="goToPreviousPage()" >
+      <span class="material-icons">close</span>
+      <a>Close</a>
+    </div>
+  </div>
+
+  <div class="topic">
+    <div class="rating">
+      <a (click)="increaseTopicRating()"><span class="material-icons">keyboard_arrow_up</span></a>
+      <p>{{topic.rating}}</p>
+      <a (click)="decreaseTopicRating()"><span class="material-icons">keyboard_arrow_down</span></a>
+    </div>
+    <div class="content">
+      <div class="top">
+        <span><a [routerLink]="['/community', topic.communityId]">{{topic.communityName}}</a></span>
+        <p>Posted by </p>
+        <a [routerLink]="['/user', topic.authorId]">{{topic.authorName}}</a>
+        <p>{{topic.postingDate}}</p>
+        <div class="edit" *ngIf="topic.authorId === us.user.id
+         || topic.communityId === us.user.moderatedCommunityId"
+          [routerLink]="['/update-topic', topic.id]">
+          <span class="material-icons">edit</span>
+          <p>Edit</p>
+        </div>
+        <div class="edit" *ngIf="(topic.communityId === us.user.moderatedCommunityId) && !topic.commentsAreBlocked"
+             (click)="blockComments()">
+          <span class="material-icons">block</span>
+          <p>Block comments</p>
+        </div>
+      </div>
+      <div class="title">
+        <p>{{topic.title}}</p>
+      </div>
+      <div class="text">
+        <p>{{topic.text}}</p>
+      </div>
+      <div class="bottom">
+        <div class="comment">
+          <span class="material-icons">question_answer</span>
+          <p>{{topic.commentsCount}} Comments</p>
+        </div>
+      </div>
+      <!-- Registered -->
+      <div class="createComment" *ngIf="us.user.id !== 0 && !topic.commentsAreBlocked">
+        <form #commentForm="ngForm" (ngSubmit)="leaveComment(); commentForm.resetForm()">
+          <div>
+          <textarea [placeholder]="createCommentPlaceholder"
+                    name="text"
+                    [(ngModel)]="createComment.text"
+                    required
+                    #text="ngModel">
+          </textarea>
+          <p style="color: red; font-size: 15px; font-weight: 500" *ngIf="(!text.valid && text.touched) || isSpaceOnly">Text is required</p>
+          </div>
+          <div>
+            <button [disabled]="commentForm.invalid">Comment</button>
+          </div>
+        </form>
+      </div>
+      <div class="blocked" *ngIf="topic.commentsAreBlocked">
+        <p style="font-weight: 500;">Comments were blocked by the moderators.</p>
+        <span class="material-icons" style="color: #fc4848">comments_disabled</span>
+      </div>
+      <hr>
+
+      <div class="comments">
+        <div class="comment" *ngFor="let c of topic.commentModels">
+          <div class="creator">
+            <span><a [routerLink]="['/user', c.authorId]">{{c.authorName}}</a></span>
+            <p>{{c.postingDate}}</p>
+          </div>
+          <div class="text" *ngIf="!c.isEditing">
+            <p>{{c.text}}</p>
+          </div>
+          <div class="editing" *ngIf="c.isEditing">
+            <textarea [(ngModel)]="updateCommentModel.text"
+                      (keydown.enter)="updateComment(c)"
+            ></textarea>
+          </div>
+          <div class="r">
+            <div class="rat">
+              <a (click)="increaseCommentRating(c)"><span class="material-icons">keyboard_arrow_up</span></a>
+              <p>{{c.rating}}</p>
+              <a (click)="decreaseCommentRating(c)"><span class="material-icons">keyboard_arrow_down</span></a>
+            </div>
+            <div class="reply"
+                 *ngIf="us.user.id !== 0 && !topic.commentsAreBlocked"
+                 (click)="replyToComment(c.id, c.authorName)">
+              <span class="material-icons">question_answer</span>
+              <a>Reply</a>
+            </div>
+            <div class="reply" *ngIf="c.authorId === us.user.id
+             || topic.communityId === us.user.moderatedCommunityId"
+                 (click)="startEditingComment(c)">
+              <span class="material-icons">edit</span>
+              <a>Edit</a>
+            </div>
+            <div class="reply" *ngIf="showDelete(c.authorId)"
+                 (click)="deleteComment(c.id)">
+              <span class="material-icons">delete</span>
+              <a>Delete</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,45 @@
+<div class="register">
+  <form #registerForm="ngForm" (ngSubmit)="register()">
+    <div class="text">
+      <h2>Registration</h2>
+    </div>
+    <div class="input">
+      <label>Username</label>
+      <input type="text" name="userName"
+             [(ngModel)]="model.userName"
+             required
+             #userName="ngModel"
+      >
+      <p class="text-danger" *ngIf="!userName.valid && userName.touched">Name is required</p>
+    </div>
+    <div class="input">
+      <label>Email</label>
+      <input type="email" name="email"
+             [(ngModel)]="model.email"
+             required
+             email
+             #email="ngModel"
+      >
+      <p class="text-danger" *ngIf="!email.valid && email.touched">Email is required</p>
+    </div>
+    <div class="input">
+      <label>BirthDate</label>
+      <input type="date" name="birthDate" [(ngModel)]="model.birthDate">
+    </div>
+    <div class="input">
+      <label>Password</label>
+      <input type="text" name="password"
+             [(ngModel)]="model.password"
+             required
+             minlength="5"
+             #password="ngModel">
+      <p class="text-danger" *ngIf="!password.valid && password.touched">Password is required</p>
+    </div>
+    <div class="input-last">
+      <button type="submit"
+              [disabled]="!registerForm.valid"
+      >Submit</button>
+    </div>
+  </form>
+</div>
+

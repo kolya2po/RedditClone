@@ -1,0 +1,268 @@
+.container {
+  display: grid;
+  padding: 2% 20%;
+  grid-template-columns: 2fr 1fr;
+  grid-gap: 4%;
+}
+
+.container .topics {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.createPost {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 1%;
+}
+
+.createPost span {
+  font-size: 45px;
+}
+
+.createPost input {
+  width: 100%;
+  border: none;
+  background-color: #f4f4f4;
+  padding: 2% 2%;
+  border-radius: 4px;
+  font-size: 15px;
+}
+
+.createPost input:hover {
+  border: 1px solid blue;
+}
+
+/* Filter */
+
+.topics .filter {
+  display: flex;
+  flex-direction: row;
+  align-self: center;
+  gap: 10px;
+  user-select: none;
+}
+
+.topics .filter p {
+  margin-right: 5px;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.filter .new {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-weight: 500;
+  border-radius: 4px;
+  padding: 10% 0;
+  cursor: pointer;
+}
+
+.filter .new:hover{
+  background-color: #929292;
+}
+
+.topics .topic, .topics .filter, .createPost {
+  border: 1px solid #cdcdcd;
+  border-radius: 4px;
+}
+
+/* Topics */
+
+.topics .topic {
+  display: grid;
+  grid-template-columns: 40px 2fr;
+}
+
+.topics .topic:hover {
+  border: 1px solid black;
+}
+
+.topics .topic a {
+  text-decoration: none;
+  color: black;
+  text-align: center;
+}
+
+.topic .rating {
+  background-color: #cdcdcd;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 10%;
+  user-select: none;
+}
+
+.rating .material-icons {
+  font-size: 30px;
+  cursor: pointer;
+}
+.topic .rating p {
+  margin-top: -2px;
+  margin-bottom: 0;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.rating .material-icons:hover {
+  font-weight: 600;
+}
+
+.topic .content {
+  display: flex;
+  flex-direction: column;
+  padding: 2% 2%;
+}
+
+.content .header {
+  font-size: 13px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header .postInfo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+}
+
+.header .postInfo a{
+  font-weight: 500;
+}
+
+.header .postInfo a:hover{
+  text-decoration: underline;
+}
+
+.header .postInfo p{
+  margin: 0;
+}
+
+.header .join a {
+  background-color: #6e6ee7;
+  border-radius: 15px;
+  color: white;
+  text-align: center;
+  padding: 5px 15px;
+  font-weight: 500;
+}
+
+.content .title {
+  text-align: justify;
+  font-size: 20px;
+  font-weight: 500;
+  margin-top: 1%;
+}
+
+.content .title p{
+  margin: 1% 0;
+}
+
+.content .comments {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 1%;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.comments .comment {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2px;
+}
+
+.comments .comment:hover {
+  border-radius: 4px;
+  background-color: #dfdddd;
+}
+
+.comments .comment a{
+  padding: 3% 0;
+}
+
+/* Communities */
+
+.container .communities {
+  display: flex;
+  flex-direction: column;
+  border-radius: 4px;
+  border: 1px solid #cdcdcd;
+  height: max-content;
+}
+
+.communities .header {
+  text-align: center;
+  font-size: 17px;
+  font-weight: 500;
+  background-color: #ab75e0;
+}
+
+.communities .header hr{
+  border: 1px solid black;
+  background-color: black;
+  margin: 0;
+}
+
+.communities .community {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid #cdcdcd;
+  padding: 4% 4%;
+  font-size: 15px;
+}
+
+.community .title {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+}
+
+.community .title a:hover {
+  text-decoration: underline;
+}
+.community p, a {
+  margin: 0;
+  text-decoration: none;
+  color: black;
+}
+
+.join {
+  cursor: pointer;
+}
+
+.community .join a {
+  background-color: #6e6ee7;
+  border-radius: 15px;
+  color: white;
+  text-align: center;
+  padding: 3px 12px;
+  font-weight: 500;
+}
+
+.communities .viewAll {
+  display: flex;
+  flex-direction: row;
+  margin: 5% 0;
+}
+.communities .viewAll a{
+  background-color: #6e6ee7;
+  border-radius: 15px;
+  margin: 0 auto;
+  color: white;
+  text-align: center;
+  font-weight: 500;
+  padding: 2% 38%;
+}

@@ -1,0 +1,27 @@
+<div class="container">
+  <div class="header">
+    <p>Create Community</p>
+  </div>
+  <form #create="ngForm" (ngSubmit)="createCommunity()">
+    <div class="input">
+      <label>Title</label>
+      <input [(ngModel)]="createCommunityModel.title" name="title"
+      required
+      #title="ngModel">
+      <p style="margin: 0; color: red; font-size: 14px; padding-top: 2px;"
+         *ngIf="title.touched && title.invalid">Title is required.</p>
+    </div>
+    <div class="input">
+      <label>About</label>
+      <textarea [(ngModel)]="createCommunityModel.about" name="about"
+                required
+                #about="ngModel"
+      ></textarea>
+      <p style="margin: 0; color: red; font-size: 14px; padding-top: 2px;"
+      *ngIf="about.touched && about.invalid">About is required.</p>
+    </div>
+    <div class="input">
+      <button [disabled]="create.invalid">Create</button>
+    </div>
+  </form>
+</div>

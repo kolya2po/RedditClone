@@ -1,0 +1,252 @@
+/* Header */
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 0 20%;
+  background-color: black;
+  color: white;
+  border-radius: 4px;
+  justify-content: space-between;
+  padding: 15px 2%;
+}
+
+.header p span {
+  font-weight: 500;
+}
+
+.header p {
+  margin: 0;
+}
+
+.close {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 4px;
+  cursor: pointer;
+  padding-right: 3px;
+}
+
+.close:hover {
+  background-color: #cdcdcd;
+  color: black;
+}
+
+.close span {
+  font-size: 25px;
+}
+
+/* Container */
+
+.container {
+  margin: 2% 10%;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 10px;
+}
+
+.about {
+  border: 1px solid #cdcdcd;
+  height: min-content;
+  border-radius: 4px;
+}
+
+.about p {
+  background-color: #ab75e0;
+  color: white;
+}
+
+.about p, .rules .title{
+  margin: 0;
+  padding: 2%;
+  border-bottom: 1px solid #cdcdcd;
+  font-weight: 500;
+}
+
+.about form {
+  display: flex;
+  flex-direction: column;
+  padding: 2%;
+  gap: 10px;
+}
+
+.about .input {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.about form p, .create-rule form p {
+  padding-left: 0;
+  background-color: white;
+}
+  .about .input label {
+    font-size: 15px;
+    font-weight: 500
+  }
+
+.about .input input {
+  padding: 1% 0;
+  font-size: 15px;
+}
+
+.about .input input:hover, .about .input textarea:hover {
+  border-radius: 2px;
+  border: 1px solid blue;
+}
+
+.about .input textarea {
+  resize: vertical;
+  min-height: 50px;
+  max-height: 100px;
+  font-size: 15px;
+}
+
+.about .input button {
+  padding: 15px 0;
+  color: white;
+  font-weight: 550;
+  font-size: 15px;
+  background-color: #701cc7;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+}
+
+/* Rules */
+
+.rules {
+  border: 1px solid #cdcdcd;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  height: min-content;
+}
+
+.title p {
+  margin: 0;
+}
+
+.title {
+  background-color: #b9b9ea;
+  color: black;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title a {
+  background-color: #ab75e0;
+  padding: 3px 7px;
+  color: white;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.rule {
+  display: flex;
+  flex-direction: column;
+  padding: 1% 2%;
+  border-top: 1px solid #cdcdcd;
+  gap: 3px;
+  font-size: 15px;
+}
+
+.top {
+  font-weight: 500;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.b, .right  {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.b:hover {
+  background-color: #cdcdcd;
+}
+.right {
+  gap: 5px;
+}
+
+.rule p {
+  margin: 0;
+}
+
+.rule span {
+  font-weight: 500;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  max-width: 1000px;
+  word-wrap: break-word;
+}
+/* Create Rule */
+
+.create-rule {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid #cdcdcd;
+}
+
+.create-rule p {
+  margin: 0;
+  padding: 2%;
+  color: white;
+  font-weight: 500;
+  background-color: #ab75e0;
+}
+
+.create-rule form  {
+  display: flex;
+  flex-direction: column;
+  padding: 2%;
+  gap: 10px;
+}
+
+.create-rule .input {
+  display: flex;
+  flex-direction: column;
+}
+
+.create-rule .input label {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.create-rule .input input {
+  padding: 1% 0;
+  font-size: 15px;
+}
+
+.create-rule .input input:hover, .create-rule .input textarea:hover {
+  border-radius: 2px;
+  border: 1px solid blue;
+}
+
+.create-rule .input textarea {
+  resize: vertical;
+  min-height: 50px;
+  max-height: 100px;
+  font-size: 15px;
+}
+
+.create-rule .input button {
+  padding: 15px 0;
+  color: white;
+  font-weight: 550;
+  font-size: 15px;
+  background-color: #701cc7;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+}

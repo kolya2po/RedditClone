@@ -1,0 +1,42 @@
+<div class="header">
+  <h3>Communities</h3>
+  <p>Browse communities.</p>
+</div>
+<div class="container">
+  <div class="communities">
+    <div class="header">
+      <p>Communities</p>
+    </div>
+    <div class="search">
+      <input placeholder="Search for community" [(ngModel)]="search">
+    </div>
+    <div class="community" *ngFor="let c of communities | communitiesFilter: search; let i = index">
+      <div class="info" [routerLink]="['/community', c.id]">
+        <span><p>{{i + 1}}</p></span>
+        <span class="material-icons">diversity_2</span>
+        <p>{{c.title}}</p>
+      </div>
+      <div class="join" *ngIf="showJoin(c.id)" (click)="join(c.id)">
+        <p>Join</p>
+      </div>
+    </div>
+  </div>
+  <div class="top">
+    <div class="header">
+     <p>Top Communities</p>
+    </div>
+    <div class="communities">
+      <div class="community" *ngFor="let c of getTopFiveCommunities(); let i = index">
+        <div class="info" [routerLink]="['/community', c.id]">
+          <span><p>{{i + 1}}</p></span>
+          <span class="material-icons">diversity_2</span>
+          <p>{{c.title}}</p>
+        </div>
+        <div class="members">
+          <span><p>Members: </p></span>
+          <p>{{c.membersCount}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

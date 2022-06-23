@@ -1,0 +1,326 @@
+.container {
+  margin: 0 15%;
+}
+
+/* Header */
+
+.header {
+  color: #e3e3e3;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 4px;
+  background-color: black;
+  padding: 0 5%;
+  gap: 3px;
+  margin-bottom: 3%;
+  user-select: none;
+}
+
+.header .rating {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+}
+
+.header .rating p {
+  font-size: 14px;
+}
+
+.header .rating span {
+  color: white;
+  font-size: 30px;
+}
+
+.header .rating span:hover {
+  color: #ab75e0;
+}
+
+.title {
+  font-size: 15px;
+}
+
+.close {
+  margin-left: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: #cdcdcd;
+}
+
+.close a {
+  color: #e3e3e3;
+  text-decoration: none;
+}
+
+/* Topic */
+
+.topic {
+  display: grid;
+  grid-template-columns: 40px 2fr;
+  padding: 1% 0;
+  border: 1px solid #dcdcdc;
+  border-radius: 4px;
+}
+
+.topic p {
+  margin: 0;
+}
+
+.topic .rating {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 10%;
+  cursor: pointer;
+  user-select: none;
+}
+
+.topic .rating p {
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: -3px;
+}
+.topic .rating span {
+  font-size: 32px;
+}
+
+.topic .rating span:hover {
+  font-size: 33px;
+  font-weight: 500;
+  color: purple;
+}
+
+.content {
+  padding-right: 2%;
+  text-align: justify;
+}
+.top, .edit {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 13px;
+  gap: 5px;
+}
+
+.top span {
+  font-weight: 500;
+}
+.top a {
+  text-decoration: none;
+  color: black;
+}
+
+.top a:hover {
+  text-decoration: underline;
+}
+.edit {
+  gap: 0;
+  font-weight: 500;
+  border-radius: 4px;
+  padding-right: 2px;
+  cursor: pointer;
+}
+
+.edit:hover {
+  background-color: #cdcdcd;
+}
+.edit p {
+  margin-top: 2px;
+}
+.edit span {
+  font-size: 20px;
+}
+
+.content .title {
+  font-size: 20px;
+  font-weight: 500;
+  padding: 5px 0;
+}
+
+.bottom {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.bottom .comment {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2px;
+  margin-top: 2%;
+}
+
+.bottom .comment p {
+  font-size: 13px;
+  font-weight: 500;
+  color: #929292;
+}
+
+.createComment {
+  margin-top: 1%;
+  padding-right: 2%;
+  width: 300px;
+}
+
+.createComment form {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.createComment div {
+  display: flex;
+  flex-direction: column;
+}
+
+.createComment textarea {
+  font-size: 17px;
+  min-height: 100px;
+  max-height: 300px;
+  resize: vertical;
+  border-radius: 4px;
+}
+
+.createComment textarea:hover {
+  border: 1px solid blue;
+}
+
+.createComment button {
+  color: white;
+  font-size: 15px;
+  font-weight: 550;
+  background-color: #ab75e0;
+  border-radius: 4px;
+  padding: 10px 0;
+  border: 2px solid #ab75e0;
+}
+
+.createComment button:hover {
+  border: 2px solid #701cc7;
+}
+
+/* Comments */
+.comments {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.comments .comment {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  border: 1px solid #cdcdcd;
+  border-radius: 4px;
+  padding: 1%;
+}
+
+.comments .comment:hover {
+  border: 1px solid black;
+}
+.comments .comment a {
+  text-decoration: none;
+  color: black;
+}
+
+.comment .editing textarea:hover {
+  border: 1px solid blue;
+  border-radius: 2px;
+}
+
+.comment .editing textarea {
+  padding: 5px 1%;
+  font-size: 16px;
+  width: 50%;
+  min-height: 50px;
+  max-height: 100px;
+  resize: vertical;
+}
+
+.creator {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 14px;
+  gap: 5px;
+}
+
+.creator span {
+  font-weight: 500;
+}
+
+.creator p {
+  color: #929292;
+}
+
+.creator span a:hover {
+ text-decoration: underline;
+}
+
+.comments .comment .r, .rat, .reply {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  user-select: none;
+}
+
+.comments .comment .r {
+  gap: 5px;
+}
+
+.blocked {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+  padding: 1%;
+  border: 1px solid #cdcdcd;
+  border-radius: 4px;
+  margin-top: 5px;
+}
+
+.blocked p {
+  margin: 0 auto;
+}
+
+.r p {
+  font-size: 13px;
+  font-weight: 500;
+}
+.r span {
+  font-size: 32px;
+}
+
+.rat span:hover {
+  color: purple;
+}
+
+.rat {
+  margin-left: -5px;
+  cursor: pointer;
+}
+.reply {
+  color: #929292;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.reply:hover {
+  background-color: #cdcdcd;
+}
+
+.reply span {
+  font-size: 25px;
+}
+.reply a {
+  font-weight: 500;
+  font-size: 13px;
+  color: #929292;
+}

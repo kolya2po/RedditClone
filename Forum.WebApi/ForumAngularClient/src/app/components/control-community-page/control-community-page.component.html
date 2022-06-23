@@ -1,0 +1,98 @@
+<div class="header">
+  <p>Control page of <span>{{community.title}}</span></p>
+  <div class="close" (click)="goToPreviousPage()">
+    <span class="material-icons">close</span>
+    <p>Close</p>
+  </div>
+</div>
+
+<div class="container">
+  <div class="about">
+    <p>Update Community</p>
+    <form #update="ngForm" (ngSubmit)="updateCommunity()">
+      <div class="input">
+        <label>Title</label>
+        <input [(ngModel)]="updateCommunityModel.title"
+        name="title"
+        required #title="ngModel">
+        <p style="margin: 0; color: red; font-size: 14px; padding-top: 2px;"
+           *ngIf="title.touched && title.invalid">Title is required.</p>
+      </div>
+      <div class="input">
+        <label>About</label>
+        <textarea [(ngModel)]="updateCommunityModel.about"
+                  name="about" required #about="ngModel"></textarea>
+        <p style="margin: 0; color: red; font-size: 14px; padding-top: 2px;"
+           *ngIf="about.touched && about.invalid">About is required.</p>
+      </div>
+      <div class="input">
+        <button [disabled]="update.invalid">Update</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="rules">
+    <div class="title">
+      <p>Community's Rules</p>
+      <a (click)="isRuleCreating = !isRuleCreating">Add</a>
+    </div>
+    <div class="rule" *ngFor="let r of community.ruleModels">
+      <div class="top">
+        <p>{{r.title}}</p>
+        <div class="right">
+          <div class="b" (click)="startEditing(r)">
+            <span class="material-icons">edit</span>
+            <p>Edit</p>
+          </div>
+          <div class="b" (click)="deleteRule(r.id)">
+            <span class="material-icons">delete</span>
+            <p>Delete</p>
+          </div>
+        </div>
+      </div>
+      <div class="text">
+        <p>{{r.ruleText}}</p>
+      </div>
+    </div>
+    <div class="create-rule" *ngIf="isRuleCreating">
+      <p>Create Rule</p>
+      <form #create="ngForm" (ngSubmit)="createRule()">
+        <div class="input">
+          <label>Title</label>
+          <input name="title" [(ngModel)]="createRuleModel.title"
+          required
+          #t="ngModel">
+          <p style="margin: 0; color: red; font-size: 14px; padding-top: 2px;"
+             *ngIf="t.touched && t.invalid">Title is required.</p>
+        </div>
+        <div class="input">
+          <label>Rule Text</label>
+          <textarea name="ruleText" [(ngModel)]="createRuleModel.ruleText"></textarea>
+        </div>
+        <div class="input">
+          <button [disabled]="create.invalid">Create</button>
+        </div>
+      </form>
+    </div>
+    <div class="create-rule" *ngIf="isRuleUpdating">
+      <p>Update Rule</p>
+      <form #create="ngForm" (ngSubmit)="updateRule()">
+        <div class="input">
+          <label>Title</label>
+          <input name="title" [(ngModel)]="updateRuleModel.title"
+                 required
+                 #t="ngModel">
+          <p style="margin: 0; color: red; font-size: 14px; padding-top: 2px;"
+             *ngIf="t.touched && t.invalid">Title is required.</p>
+        </div>
+        <div class="input">
+          <label>Rule Text</label>
+          <textarea name="ruleText" [(ngModel)]="updateRuleModel.ruleText"></textarea>
+        </div>
+        <div class="input">
+          <button [disabled]="create.invalid">Update</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
