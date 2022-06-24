@@ -1,90 +1,8 @@
 <mat-tab-group animationDuration="0ms">
   <mat-tab label="Posts">
     <div class="container">
-      <div class="posts">
-        <div class="filter">
-          <div class="new" (click)="sortNewTopics()">
-            <span class="material-icons">new_releases</span>
-            <p>New</p>
-          </div>
-          <div class="new" (click)="sortTopTopics()">
-            <span class="material-icons">star</span>
-            <p>Top</p>
-          </div>
-        </div>
-        <div class="post" *ngFor="let t of user.postModels">
-          <div class="rating">
-            <div class="center">
-              <a (click)="increase(t)"><span class="material-icons">keyboard_arrow_up</span></a>
-              <p>{{t.rating}}</p>
-              <a (click)="decrease(t)"><span class="material-icons">keyboard_arrow_down</span></a>
-            </div>
-          </div>
-          <div class="content">
-            <div class="postInfo">
-              <div class="title">
-                <a [routerLink]="['/topic', t.id]">{{t.title}}</a>
-              </div>
-              <div class="creatorInfo">
-                <a [routerLink]="['/community', t.communityId]">{{t.communityName}}</a>
-                <div class="join" *ngIf="showJoin(t.communityId)"
-                     (click)="join(t.communityId)">
-                  <a>Join</a>
-                </div>
-                <p>Posted by <a [routerLink]="['/user', t.authorId]">{{t.authorName}}</a> {{t.postingDate}}</p>
-              </div>
-              <div class="comments">
-                <div class="comment">
-                  <span class="material-icons">question_answer</span>
-                  <a [routerLink]="['/topic', t.id]">{{t.commentsCount}} Comments</a>
-                </div>
-                <!-- For user only -->
-                <div class="edit" *ngIf="us.user.id !== 0 && us.user.id == id">
-                  <span [matMenuTriggerFor]="menu" class="material-icons">more_horiz</span>
-                  <mat-menu #menu="matMenu">
-                    <a [routerLink]="['/update-topic', t.id]" mat-menu-item>Edit</a>
-                    <a (click)="deleteTopic(t.id)" mat-menu-item>Delete</a>
-                  </mat-menu>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="profile">
-        <div class="header">
-          <div class="name">
-            <p>{{user.userName}}</p>
-          </div>
-          <div *ngIf="user.id === us.user.id"
-                (click)="isEditing = !isEditing">
-            <span class="material-icons">edit</span>
-          </div>
-        </div>
-        <div class="info">
-          <div class="karma">
-            <p class="bold">Karma</p>
-            <p>{{user.karma}}</p>
-          </div>
-          <div class="birthDate">
-            <p class="bold">Birth Date</p>
-            <p>{{user.birthDate}}</p>
-          </div>
-        </div>
-        <div class="editProfile" *ngIf="isEditing">
-          <div class="input">
-            <label>UserName</label>
-            <input name="userName" [(ngModel)]="updateUserModel.userName">
-          </div>
-          <div class="input">
-            <label>Birthdate</label>
-            <input type="date" name="birthDate" [(ngModel)]="updateUserModel.birthDate">
-          </div>
-          <div class="input">
-            <button (click)="updateUser()">Update</button>
-          </div>
-        </div>
-      </div>
+      <app-topic-list [topics]="topics" [user]="user" [isUserPage]="true" [isMainPage]="true"></app-topic-list>
+      <app-user-profile [user]="user"></app-user-profile>
     </div>
   </mat-tab>
   <mat-tab label="Comments">
@@ -108,7 +26,7 @@
             <p>{{c.rating}} points</p>
             <p>{{c.postingDate}}</p>
             <!-- For user only -->
-            <div class="edit"  *ngIf="us.user.id !== 0 && us.user.id == id">
+            <div class="edit" *ngIf="us.user.id !== 0 && us.user.id == user.id">
               <span [matMenuTriggerFor]="menu" class="material-icons">more_horiz</span>
               <mat-menu #menu="matMenu">
                 <a (click)="startEditing(c)" mat-menu-item>Edit</a>
@@ -126,40 +44,7 @@
           </div>
         </div>
       </div>
-      <div class="profile">
-        <div class="header">
-        <div class="name">
-          <p>{{user.userName}}</p>
-        </div>
-        <div *ngIf="user.id === us.user.id"
-              (click)="isEditing = !isEditing">
-          <span class="material-icons">edit</span>
-        </div>
-        </div>
-        <div class="info">
-          <div class="karma">
-            <p class="bold">Karma</p>
-            <p>{{user.karma}}</p>
-          </div>
-          <div class="birthDate">
-            <p class="bold">Birth Date</p>
-            <p>{{user.birthDate}}</p>
-          </div>
-        </div>
-        <div class="editProfile" *ngIf="isEditing">
-          <div class="input">
-            <label>UserName</label>
-            <input name="userName" [(ngModel)]="updateUserModel.userName">
-          </div>
-          <div class="input">
-            <label>Birthdate</label>
-            <input type="date" name="birthDate" [(ngModel)]="updateUserModel.birthDate">
-          </div>
-          <div class="input">
-            <button (click)="updateUser()">Update</button>
-          </div>
-        </div>
-      </div>
+      <app-user-profile [user]="user"></app-user-profile>
     </div>
   </mat-tab>
 </mat-tab-group>

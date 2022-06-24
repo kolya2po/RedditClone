@@ -27,7 +27,6 @@ const routes: Routes = [
 
   { path: 'topic/:id', component: TopicPageComponent },
   { path: 'create-topic/:id', component: CreateTopicPageComponent },
-  { path: 'create-topic', component: CreateTopicPageComponent },
   { path: 'update-topic/:id', component: UpdateTopicPageComponent },
 ]
 

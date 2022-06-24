@@ -73,16 +73,22 @@ export class TopicHelperService {
     }
   }
 
-  sortTop(isSorted: boolean, posts: TopicModel[] | undefined, postsCopy: TopicModel[]) {
+  sortTop(isSorted: boolean, posts: TopicModel[] | undefined, postsCopy: TopicModel[], isMainPage = false, isUserPage = false) {
     if (!isSorted) {
-      let pinned = posts!.filter(t => t.isPinned);
-      let notPinned = posts!.slice(pinned!.length);
-      postsCopy = pinned.concat(notPinned);
-      let notPinnedCopy = [...notPinned];
-      // @ts-ignore
-      notPinnedCopy.sort((a, b) => b.rating - a.rating);
+      if (!isMainPage || !isUserPage) {
+        let pinned = posts!.filter(t => t.isPinned);
+        let notPinned = posts!.slice(pinned!.length);
+        postsCopy = pinned.concat(notPinned);
+        let notPinnedCopy = [...notPinned];
+        // @ts-ignore
+        notPinnedCopy.sort((a, b) => b.rating - a.rating);
 
-      posts = pinned.concat(notPinnedCopy);
+        posts = pinned.concat(notPinnedCopy);
+        isSorted = true;
+        return {posts, isSorted, postsCopy};
+      }
+      // @ts-ignore
+      posts.sort((a, b) => b.rating - a.rating);
       isSorted = true;
       return {posts, isSorted, postsCopy};
     }
@@ -93,19 +99,29 @@ export class TopicHelperService {
     return {posts, isSorted, postsCopy};
   }
 
-  sortNew(isSorted: boolean, posts: TopicModel[] | undefined, postsCopy: TopicModel[]) {
+  sortNew(isSorted: boolean, posts: TopicModel[] | undefined, postsCopy: TopicModel[], isMainPage = false, isUserPage = false) {
     if (!isSorted) {
-      let pinned = posts!.filter(t => t.isPinned);
-      let notPinned = posts!.slice(pinned!.length);
-      postsCopy = pinned.concat(notPinned);
-      let notPinnedCopy = [...notPinned];
+      if (!isMainPage || !isUserPage) {
+        let pinned = posts!.filter(t => t.isPinned);
+        let notPinned = posts!.slice(pinned!.length);
+        postsCopy = pinned.concat(notPinned);
+        let notPinnedCopy = [...notPinned];
 
-      notPinnedCopy.sort((a, b) => {
+        notPinnedCopy.sort((a, b) => {
+          // @ts-ignore
+          return b.postingDate.localeCompare(a.postingDate);
+        });
+
+        posts = pinned.concat(notPinnedCopy);
+        isSorted = true;
+        return {posts, isSorted, postsCopy};
+      }
+
+      // @ts-ignore
+      posts.sort((a, b) => {
         // @ts-ignore
         return b.postingDate.localeCompare(a.postingDate);
       });
-
-      posts = pinned.concat(notPinnedCopy);
       isSorted = true;
       return {posts, isSorted, postsCopy};
     }

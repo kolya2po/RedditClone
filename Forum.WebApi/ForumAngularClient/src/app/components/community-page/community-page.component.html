@@ -10,59 +10,7 @@
      style="background-color: #701cc7;">Moderator</a>
 </div>
 <div class="container">
-  <div class="topics">
-
-    <div class="createPost" *ngIf="us.user.id !== 0" (click)="router.navigate(['create-topic', id])">
-      <span class="material-icons">article</span>
-      <input placeholder="Create post">
-    </div>
-
-    <div class="filter">
-      <div class="new" (click)="sortNew()">
-        <span class="material-icons">new_releases</span>
-        <p>New</p>
-      </div>
-      <div class="new" (click)="sortTop()">
-        <span class="material-icons">star</span>
-        <p>Top</p>
-      </div>
-    </div>
-
-    <div class="topic" *ngFor="let t of community.postModels">
-      <div class="rating">
-        <a (click)="increase(t)"><span class="material-icons">keyboard_arrow_up</span></a>
-        <p>{{t.rating}}</p>
-        <a (click)="decrease(t)"><span class="material-icons">keyboard_arrow_down</span></a>
-      </div>
-      <div class="content">
-        <div class="header">
-          <div class="postInfo">
-            <p>Posted by <a [routerLink]="['/user', t.authorId]">{{t.authorName}}</a> {{t.postingDate}}</p>
-          </div>
-          <span *ngIf="t.isPinned" class="material-icons">push_pin</span>
-        </div>
-        <div class="title">
-          <a [routerLink]="['/topic', t.id]">{{t.title}}</a>
-        </div>
-        <div class="comments">
-          <div class="comment" [routerLink]="['/topic', t.id]">
-            <span class="material-icons">question_answer</span>
-            <a>{{t.commentsCount}} Comments</a>
-          </div>
-          <!-- For moderator -->
-          <div class="edit" *ngIf="us.user.moderatedCommunityId == id">
-            <span [matMenuTriggerFor]="menu" class="material-icons">more_horiz</span>
-            <mat-menu #menu="matMenu">
-              <a [routerLink]="['/update-topic', t.id]" mat-menu-item>Edit</a>
-              <button *ngIf="!t.isPinned" (click)="pin(t)" mat-menu-item>Pin</button>
-              <button *ngIf="t.isPinned" (click)="unpin(t)" mat-menu-item>Unpin</button>
-              <button (click)="deleteTopic(t.id)" mat-menu-item>Delete</button>
-            </mat-menu>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <app-topic-list [topics]="topics" [community]="community"></app-topic-list>
   <div class="info">
     <div class="about">
       <div class="header">

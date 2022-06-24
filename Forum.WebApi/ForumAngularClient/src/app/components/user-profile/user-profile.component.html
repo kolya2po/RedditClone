@@ -1,0 +1,34 @@
+<div class="profile">
+  <div class="header">
+    <div class="name">
+      <p>{{user.userName}}</p>
+    </div>
+    <div *ngIf="user.id === us.user.id"
+         (click)="isEditing = !isEditing">
+      <span class="material-icons">edit</span>
+    </div>
+  </div>
+  <div class="info">
+    <div class="karma">
+      <p class="bold">Karma</p>
+      <p>{{user.karma}}</p>
+    </div>
+    <div class="birthDate">
+      <p class="bold">Birth Date</p>
+      <p>{{user.birthDate}}</p>
+    </div>
+  </div>
+  <div class="editProfile" *ngIf="isEditing">
+    <div class="input">
+      <label>UserName</label>
+      <input name="userName" [(ngModel)]="updateUserModel.userName">
+    </div>
+    <div class="input">
+      <label>Birthdate</label>
+      <input type="date" name="birthDate" [(ngModel)]="updateUserModel.birthDate">
+    </div>
+    <div class="input">
+      <button (click)="updateUser()">Update</button>
+    </div>
+  </div>
+</div>

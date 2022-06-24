@@ -21,14 +21,15 @@ import {JwtModule} from '@auth0/angular-jwt';
 import {RoutingModule} from "./routing/routing.module";
 import { CommunityUsersPageComponent } from './components/community-users-page/community-users-page.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { CommunitiesPageComponent } from './components/communities-page/communities-page.component';
 import {CommunitiesFilterPipe} from "./components/communities-page/communities-filter.pipe";
 import {UsersFilterPipe} from "./components/community-users-page/users-filter.pipe";
 import {HttpClientModule} from "@angular/common/http";
 import { CreateCommunityPageComponent } from './components/create-community-page/create-community-page.component';
 import { ControlCommunityPageComponent } from './components/control-community-page/control-community-page.component';
 import { UpdateTopicPageComponent } from './components/update-topic-page/update-topic-page.component';
-import { TopCommunitiesComponent } from './components/top-communities/top-communities.component';
+import {UserProfileComponent} from "./components/user-profile/user-profile.component";
+import { TopicListComponent } from './components/topic-list/topic-list.component';
+import {CommunitiesPageComponent} from "./components/communities-page/communities-page.component";
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { TopCommunitiesComponent } from './components/top-communities/top-commun
     CreateCommunityPageComponent,
     ControlCommunityPageComponent,
     UpdateTopicPageComponent,
-    TopCommunitiesComponent
+    UserProfileComponent,
+    TopicListComponent
   ],
   imports: [
     BrowserModule,

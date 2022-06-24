@@ -9,9 +9,6 @@ import {UpdateCommentModel} from "../../models/comment/update-comment.model";
 import {CommentService} from "../../services/comment.service";
 import {TopicModel} from "../../models/topic/topic.model";
 import {CommentModel} from "../../models/comment/comment.model";
-import {UpdateUserModel} from "../../models/user/update-user.model";
-import {catchError, tap} from "rxjs";
-import {TopicHelperService} from "../../services/topic-helper.service";
 
 @Component({
   selector: 'app-user-page',
@@ -20,14 +17,12 @@ import {TopicHelperService} from "../../services/topic-helper.service";
 })
 export class UserPageComponent implements OnInit {
   user = new UserModel();
-  updateUserModel = new UpdateUserModel();
+  topics: TopicModel[] = [];
   sub: any;
   id = 0;
-  isEditing = false;
+
   updateCommentModel = new UpdateCommentModel();
-  topicsSorted = false;
   commentsSorted = false;
-  topicsCopy: TopicModel[] = [];
   commentsCopy: CommentModel[] = [];
 
   constructor(public us: UserService, private route: ActivatedRoute,
@@ -35,8 +30,7 @@ export class UserPageComponent implements OnInit {
               private ts: TopicService,
               private router: Router,
               private cs: CommunityService,
-              private commentService: CommentService,
-              private topicHelper: TopicHelperService) {
+              private commentService: CommentService) {
   }
 
   ngOnInit(): void {
@@ -46,35 +40,12 @@ export class UserPageComponent implements OnInit {
       this.us.getById(this.id)
         .subscribe(u => {
           this.user = u;
-
-          this.updateUserModel.id = u.id;
           // @ts-ignore
-          this.updateUserModel.userName = u.userName;
-          // @ts-ignore
-          this.updateUserModel.birthDate =  u.birthDate;
-
-          // @ts-ignore
-          this.topicsCopy = [...this.user.postModels];
+          this.topics = u.postModels;
           // @ts-ignore
           this.commentsCopy = [...this.user.commentModels];
         });
     });
-  }
-
-  increase(topic: any) {
-    if (this.us.user.id === 0) {
-      this.router.navigate(['/login']);
-      return;
-    }
-    this.user.karma = this.topicHelper.increaseRating(topic, this.user.postModels, this.user.karma);
-  }
-
-  decrease(topic: any) {
-    if (this.us.user.id === 0) {
-      this.router.navigate(['/login']);
-      return;
-    }
-    this.user.karma = this.topicHelper.decreaseRating(topic, this.user.postModels, this.user.karma);
   }
 
   join(communityId: any) {
@@ -89,14 +60,6 @@ export class UserPageComponent implements OnInit {
   showJoin(id: any) {
     let userInCommunity = this.us.user.communitiesIds?.includes(id);
     return this.us.user.id === 0 || (this.us.user.id !== 0 && !userInCommunity);
-  }
-
-  deleteTopic(id: any) {
-    console.log(id);
-    this.ts.delete(id)
-      .subscribe(() => {
-        this.user.postModels = this.user.postModels?.filter(t => t.id !== id);
-      })
   }
 
   startEditing(comment: any) {
@@ -114,41 +77,6 @@ export class UserPageComponent implements OnInit {
         comment.text = this.updateCommentModel.text;
         comment.isEditing = false;
       })
-  }
-
-  updateUser() {
-    this.us.update(this.updateUserModel)
-      .pipe(tap(() => {
-      }), catchError((err) => {
-        this.openSnackBar('You must be at least 7 years old.');
-        throw err;
-      }))
-      .subscribe(() => {
-        this.us.getById(this.user.id)
-          .subscribe(u => {
-            this.us.user = u;
-            this.user.userName = u.userName;
-            this.user.birthDate = u.birthDate;
-          });
-
-        this.isEditing = false;
-      });
-  }
-
-  sortTopTopics() {
-    let obj = this.topicHelper
-      .sortTop(this.topicsSorted, this.user.postModels, this.topicsCopy);
-    this.user.postModels = obj.posts;
-    this.topicsSorted = obj.isSorted;
-    this.topicsCopy = obj.postsCopy;
-  }
-
-  sortNewTopics() {
-    let obj = this.topicHelper
-      .sortNew(this.topicsSorted, this.user.postModels, this.topicsCopy);
-    this.user.postModels = obj.posts;
-    this.topicsSorted = obj.isSorted;
-    this.topicsCopy = obj.postsCopy;
   }
 
   sortTopComments() {
@@ -185,12 +113,6 @@ export class UserPageComponent implements OnInit {
           ?.filter(c => c.id !== id);
         this.user.commentModels = this.user.commentModels
           ?.filter(c => c.id !== id);
-    });
-  }
-
-  openSnackBar(message: any) {
-    this._snackBar.open(message, '', {
-      duration: 2000
     });
   }
 }
