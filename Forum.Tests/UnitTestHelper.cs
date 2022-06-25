@@ -4,12 +4,8 @@ using AutoMapper;
 using Business;
 using Data;
 using Data.Models;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Moq;
 
 namespace Forum.Tests
@@ -39,25 +35,10 @@ namespace Forum.Tests
 
         public static Mock<UserManager<User>> GetMockUserManager()
         {
-            var store = new Mock<IUserStore<User>>();
-            var mgr = new Mock<UserManager<User>>(store.Object, null, null, null, null, null, null, null, null);
+            var mgr = new Mock<UserManager<User>>(Mock.Of<IUserStore<User>>(), null, null, null, null, null, null, null, null);
             mgr.Object.UserValidators.Add(new UserValidator<User>());
             mgr.Object.PasswordValidators.Add(new PasswordValidator<User>());
             return mgr;
-        }
-
-        public static Mock<SignInManager<User>> GetMockSignInManager()
-        {
-            var signInManagerMock = new Mock<SignInManager<User>>(
-                new Mock<UserManager<User>>().Object,
-                Mock.Of<IHttpContextAccessor>(),
-                Mock.Of<IUserClaimsPrincipalFactory<User>>(),
-                null,
-                null,
-                null,
-                Mock.Of<IUserConfirmation<User>>());
-
-            return signInManagerMock;
         }
 
         private static void SeedData(ForumDbContext context)

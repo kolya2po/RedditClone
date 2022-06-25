@@ -8,7 +8,6 @@ using NUnit.Framework;
 
 namespace Forum.Tests.DataTests
 {
-    // TODO: Have to be done.
     [TestFixture]
     public class UserCommunityRepositoryTests
     {
