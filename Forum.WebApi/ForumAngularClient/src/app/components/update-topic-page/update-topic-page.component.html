@@ -21,14 +21,10 @@
        *ngIf="title.touched && title.invalid">Title is required.</p>
     <div class="input">
       <label>Text</label>
-      <textarea name="text" [(ngModel)]="updateTopicModel.text"
-                required
-                #text="ngModel"></textarea>
+      <textarea name="text" [(ngModel)]="updateTopicModel.text"></textarea>
     </div>
-    <p style="margin: 0; color: red; font-size: 14px; padding-top: 2px;"
-       *ngIf="text.touched && text.invalid">Text is required.</p>
     <div class="input">
-      <button [disabled]="update.invalid">Update</button>
+      <button type="submit" [disabled]="update.invalid" [style.cursor]="update.invalid ? 'not-allowed' : 'pointer'">Update</button>
     </div>
   </form>
 </div>

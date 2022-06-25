@@ -26,7 +26,7 @@
            *ngIf="about.touched && about.invalid">About is required.</p>
       </div>
       <div class="input">
-        <button [disabled]="update.invalid">Update</button>
+        <button [disabled]="update.invalid" [style.cursor]="update.invalid ? 'not-allowed' : 'pointer'">Update</button>
       </div>
     </form>
   </div>
@@ -70,7 +70,7 @@
           <textarea name="ruleText" [(ngModel)]="createRuleModel.ruleText"></textarea>
         </div>
         <div class="input">
-          <button [disabled]="create.invalid">Create</button>
+          <button [disabled]="create.invalid"  [style.cursor]="create.invalid ? 'not-allowed' : 'pointer'">Create</button>
         </div>
       </form>
     </div>
@@ -90,7 +90,7 @@
           <textarea name="ruleText" [(ngModel)]="updateRuleModel.ruleText"></textarea>
         </div>
         <div class="input">
-          <button [disabled]="create.invalid">Update</button>
+          <button [disabled]="create.invalid"  [style.cursor]="create.invalid ? 'not-allowed' : 'pointer'">Update</button>
         </div>
       </form>
     </div>

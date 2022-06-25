@@ -21,7 +21,7 @@
       *ngIf="about.touched && about.invalid">About is required.</p>
     </div>
     <div class="input">
-      <button [disabled]="create.invalid">Create</button>
+      <button [disabled]="create.invalid"  [style.cursor]="create.invalid ? 'not-allowed' : 'pointer'">Create</button>
     </div>
   </form>
 </div>

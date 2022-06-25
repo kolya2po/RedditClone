@@ -21,14 +21,17 @@
   <div class="editProfile" *ngIf="isEditing">
     <div class="input">
       <label>UserName</label>
-      <input name="userName" [(ngModel)]="updateUserModel.userName">
+      <input name="userName" [(ngModel)]="updateUserModel.userName"
+      required
+      #name="ngModel">
     </div>
+    <p *ngIf="name.invalid && name.touched" style="margin: 0; color: red; font-weight: 500">Username is required.</p>
     <div class="input">
       <label>Birthdate</label>
       <input type="date" name="birthDate" [(ngModel)]="updateUserModel.birthDate">
     </div>
     <div class="input">
-      <button (click)="updateUser()">Update</button>
+      <button (click)="updateUser()" [style.cursor]="name.invalid ? 'not-allowed' : 'pointer'">Update</button>
     </div>
   </div>
 </div>

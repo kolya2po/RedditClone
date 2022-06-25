@@ -31,7 +31,7 @@
         </div>
         <hr>
         <div class="send">
-          <button [disabled]="create.invalid">Post</button>
+          <button type="submit" [disabled]="create.invalid" [style.cursor]="create.invalid ? 'not-allowed' : 'pointer'">Post</button>
         </div>
       </div>
     </form>
