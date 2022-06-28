@@ -41,7 +41,7 @@ namespace Forum.Tests
             return mgr;
         }
 
-        private static void SeedData(ForumDbContext context)
+        public static void SeedData(ForumDbContext context)
         {
             context.Comments.AddRange(GetTestComments());
             context.Communities.AddRange(GetTestCommunities());
@@ -192,7 +192,7 @@ namespace Forum.Tests
                 }
             };
 
-        public static IEnumerable<User> GetTestUsers() =>
+        private static IEnumerable<User> GetTestUsers() =>
             new[]
             {
                 new User

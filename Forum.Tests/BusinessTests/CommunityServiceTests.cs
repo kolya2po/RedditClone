@@ -30,25 +30,21 @@ namespace Forum.Tests.BusinessTests
 
             // Assert
             actual.Should().BeEquivalentTo(GetTestCommunityModels, config =>
-            {
-                return config.Excluding(c => c.CreationDate)
-                    .Excluding(c => c.PostModels)
-                    .Excluding(c => c.ModeratorModels);
-            });
+                config.Excluding(c => c.CreationDate)
+                      .Excluding(c => c.PostModels)
+                      .Excluding(c => c.ModeratorModels));
+
             actual.SelectMany(c => c.PostModels)
                 .Should().BeEquivalentTo(GetTestCommunityModels.SelectMany(c => c.PostModels), config =>
-                {
-                    return config.Excluding(p => p.PostingDate)
-                        .Excluding(p => p.CommentModels);
-                });
+                    config.Excluding(p => p.PostingDate)
+                          .Excluding(p => p.CommentModels));
+
             actual.SelectMany(c => c.ModeratorModels)
                 .Should().BeEquivalentTo(GetTestCommunityModels.SelectMany(c => c.ModeratorModels), config =>
-                {
-                    return config.Excluding(c => c.BirthDate)
-                        .Excluding(c => c.CommunitiesIds)
-                        .Excluding(c => c.PostModels)
-                        .Excluding(c => c.CommentModels);
-                });
+                    config.Excluding(c => c.BirthDate)
+                          .Excluding(c => c.CommunitiesIds)
+                          .Excluding(c => c.PostModels)
+                          .Excluding(c => c.CommentModels));
         }
 
         [TestCase(1)]
@@ -66,27 +62,22 @@ namespace Forum.Tests.BusinessTests
 
             // Assert
             actual.Should().BeEquivalentTo(GetTestCommunityModels.First(), config =>
-            {
-                return config.Excluding(c => c.CreationDate)
+                config.Excluding(c => c.CreationDate)
                     .Excluding(c => c.PostModels)
-                    .Excluding(c => c.ModeratorModels);
-            });
+                    .Excluding(c => c.ModeratorModels));
+
             actual.PostModels
                 .Should().BeEquivalentTo(GetTestCommunityModels.First().PostModels, config =>
-                {
-                    return config.Excluding(p => p.PostingDate)
-                        .Excluding(p => p.CommentModels);
-                });
+                    config.Excluding(p => p.PostingDate)
+                        .Excluding(p => p.CommentModels));
+
             actual.ModeratorModels
                 .Should().BeEquivalentTo(GetTestCommunityModels.First().ModeratorModels, config =>
-                {
-                    return config.Excluding(c => c.BirthDate)
+                    config.Excluding(c => c.BirthDate)
                         .Excluding(c => c.CommunitiesIds)
                         .Excluding(c => c.PostModels)
-                        .Excluding(c => c.CommentModels);
-                });
+                        .Excluding(c => c.CommentModels));
         }
-
 
         [Test]
         public async Task UpdateAsync_UpdatesCommunity()
@@ -149,12 +140,10 @@ namespace Forum.Tests.BusinessTests
 
             // Assert
             actual.Should().BeEquivalentTo(expected, config =>
-            {
-                return config.Excluding(c => c.PostModels)
-                    .Excluding(c => c.BirthDate)
-                    .Excluding(c => c.CommentModels)
-                    .Excluding(c => c.CommunitiesIds);
-            });
+                config.Excluding(c => c.PostModels)
+                      .Excluding(c => c.BirthDate)
+                      .Excluding(c => c.CommentModels)
+                      .Excluding(c => c.CommunitiesIds));
         }
 
         [Test]
@@ -238,17 +227,6 @@ namespace Forum.Tests.BusinessTests
             mockUnitOfWork.Verify(u => u.UserCommunityRepository.Delete(It.IsAny<UserCommunity>()), Times.Once);
             mockUnitOfWork.Verify(u => u.SaveAsync(), Times.Once);
         }
-
-
-
-
-
-
-
-
-
-
-
 
         private static IEnumerable<Community> GetTestCommunities =>
             new[]

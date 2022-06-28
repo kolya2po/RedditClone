@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Business.MapModels;
 using Business.Services;
+using Business.Validation;
 using Data.Interfaces;
 using Data.Models;
 using FluentAssertions;
@@ -128,6 +129,21 @@ namespace Forum.Tests.BusinessTests
         }
 
         [Test]
+        public async Task IncreaseRatingAsync_ThrowsForumExceptionIfTopicIsNull()
+        {
+            // Arrange
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(u => u.TopicRepository.GetByIdAsync(It.IsAny<int>()));
+            var topicService = new TopicService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile());
+
+            // Act
+            Func<Task> act = async () => await topicService.IncreaseRatingAsync(1);
+
+            // Assert
+            await act.Should().ThrowAsync<ForumException>();
+        }
+
+        [Test]
         public async Task DecreaseRatingAsync_DecreasesTopicsRating()
         {
             // Arrange
@@ -144,6 +160,21 @@ namespace Forum.Tests.BusinessTests
             mockUnitOfWork.Verify(u => u.TopicRepository
                 .Update(It.Is<Topic>(t => t.Id == 1 && t.Rating == GetTestTopic.Rating - 1)), Times.Once);
             mockUnitOfWork.Verify(u => u.SaveAsync(), Times.Once);
+        }
+
+        [Test]
+        public async Task DecreaseRatingAsync_ThrowsForumExceptionIfTopicIsNull()
+        {
+            // Arrange
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(u => u.TopicRepository.GetByIdAsync(It.IsAny<int>()));
+            var topicService = new TopicService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile());
+
+            // Act
+            Func<Task> act = async () => await topicService.DecreaseRatingAsync(1);
+
+            // Assert
+            await act.Should().ThrowAsync<ForumException>();
         }
 
         [Test]
@@ -166,6 +197,21 @@ namespace Forum.Tests.BusinessTests
         }
 
         [Test]
+        public async Task PinTopicAsync_ThrowsForumExceptionIfTopicIsNull()
+        {
+            // Arrange
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(u => u.TopicRepository.GetByIdAsync(It.IsAny<int>()));
+            var topicService = new TopicService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile());
+
+            // Act
+            Func<Task> act = async () => await topicService.PinTopicAsync(1);
+
+            // Assert
+            await act.Should().ThrowAsync<ForumException>();
+        }
+
+        [Test]
         public async Task UnpinTopicAsync_UnpinsTopic()
         {
             // Arrange
@@ -182,6 +228,21 @@ namespace Forum.Tests.BusinessTests
             mockUnitOfWork.Verify(u => u.TopicRepository
                 .Update(It.Is<Topic>(t => t.Id == 1 && !t.IsPinned)), Times.Once);
             mockUnitOfWork.Verify(u => u.SaveAsync(), Times.Once);
+        }
+
+        [Test]
+        public async Task UnpinTopicAsync_ThrowsForumExceptionIfTopicIsNull()
+        {
+            // Arrange
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(u => u.TopicRepository.GetByIdAsync(It.IsAny<int>()));
+            var topicService = new TopicService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile());
+
+            // Act
+            Func<Task> act = async () => await topicService.UnpinTopicAsync(1);
+
+            // Assert
+            await act.Should().ThrowAsync<ForumException>();
         }
 
         [TestCase(1)]
@@ -201,6 +262,22 @@ namespace Forum.Tests.BusinessTests
             // Assert
             mockUnitOfWork.Verify(u => u.TopicRepository.Update(It.Is<Topic>(t => t.Id == expected.Id && t.CommentsAreBlocked == expected.CommentsAreBlocked)), Times.Once);
             mockUnitOfWork.Verify(u => u.SaveAsync(), Times.Once);
+        }
+
+
+        [Test]
+        public async Task BlockCommentsAsync_ThrowsForumExceptionIfTopicIsNull()
+        {
+            // Arrange
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(u => u.TopicRepository.GetByIdAsync(It.IsAny<int>()));
+            var topicService = new TopicService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile());
+
+            // Act
+            Func<Task> act = async () => await topicService.BlockCommentsAsync(1);
+
+            // Assert
+            await act.Should().ThrowAsync<ForumException>();
         }
 
         private static TopicModel GetTestTopicModel => new TopicModel

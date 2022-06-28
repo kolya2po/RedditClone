@@ -83,7 +83,7 @@ namespace Business.ServiceConfiguration
                 opt.AddPolicy("ModeratorOnly", policy => policy.RequireClaim(ClaimTypes.Role, "Moderator"));
             });
 
-            services.AddScoped<IJwtHandler, JwnHandler>();
+            services.AddScoped<IJwtHandler, JwtHandler>();
             return services;
         }
     }

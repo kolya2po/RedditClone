@@ -12,15 +12,15 @@ namespace Business
     /// <summary>
     /// Implements IJwtHandler interface.
     /// </summary>
-    public class JwnHandler : IJwtHandler
+    public class JwtHandler : IJwtHandler
     {
         private readonly IConfigurationSection _jwtSettings;
 
         /// <summary>
-        /// Initializes new instance of the JwnHandler class.
+        /// Initializes new instance of the JwtHandler class.
         /// </summary>
         /// <param name="configuration">Object with application's configuration.</param>
-        public JwnHandler(IConfiguration configuration)
+        public JwtHandler(IConfiguration configuration)
         {
             _jwtSettings = configuration.GetSection("Auth");
         }
