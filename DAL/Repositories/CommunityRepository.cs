@@ -78,6 +78,7 @@ namespace Data.Repositories
                 .ThenInclude(p => p.Comments)
                 .Include(c => c.Rules)
                 .Include(c => c.Members)
+                .ThenInclude(uc => uc.User)
                 .Include(c => c.Moderators)
                 .FirstOrDefaultAsync(c => c.Id == id);
         }

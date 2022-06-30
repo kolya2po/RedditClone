@@ -26,13 +26,9 @@
         <div class="text">
           <p>{{community.about}}</p>
         </div>
-        <div class="members" *ngIf="us.user.moderatedCommunityId !== id">
-          <p>Members: <span>{{community.membersCount}}</span></p>
-        </div>
-        <!-- For moderator -->
-        <div class="members" *ngIf="us.user.moderatedCommunityId === id">
-          <p [routerLink]="['/community/users', community.title, id]"
-          >Members: <span>{{community.membersCount}}</span></p>
+        <div class="members">
+          <p  *ngIf="us.user.moderatedCommunityId !== id">Members: <span>{{community.membersCount}}</span></p>
+          <p  *ngIf="us.user.moderatedCommunityId === id" [routerLink]="['/community/users', community.title, id]">Members: <span>{{community.membersCount}}</span></p>
         </div>
         <hr>
         <div class="created">

@@ -23,7 +23,7 @@
         <a *ngIf="!u?.moderatedCommunityId && u?.moderatedCommunityId !== id"
            (click)="setModerator(u.id, u)"
         >Set as moderator</a>
-        <a *ngIf="us.user.createdCommunityId === id && us.user.id !== u.id && !u.moderatedCommunityId"
+        <a *ngIf="us.user.createdCommunityId === id && us.user.id !== u.id && u.moderatedCommunityId == id"
            (click)="removeModerator(u.id, u)"
         >Remove moderation</a>
       </div>
