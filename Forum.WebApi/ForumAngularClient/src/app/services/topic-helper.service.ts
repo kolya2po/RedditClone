@@ -22,23 +22,44 @@ export class TopicHelperService {
       });
   }
 
-  increaseRating(topic: any, topics: TopicModel[] | undefined, karma: any = undefined) {
-    if (!topic.isRatedUp) {
+  increaseRating(topic: any, topics: TopicModel[] | undefined) {
+    if (topic.isRatedDown && !topic.isRatedUp) {
+      this.increase(topic, topics);
+      this.increase(topic, topics);
+      topic.isRatedDown = false;
+      topic.isRatedUp = true;
+
+      return;
+    }
+    if (!topic.isRatedUp || topic.isRatedDown) {
       this.increase(topic, topics);
       topic.isRatedUp = true;
-      if (karma !== undefined) {
-        karma++;
-        return karma;
-      }
+      topic.isRatedDown = false;
       return;
     }
 
     this.decrease(topic, topics);
     topic.isRatedUp = false;
-    if (karma !== undefined) {
-      karma--;
-      return karma;
+  }
+
+  decreaseRating(topic: any, topics: TopicModel[] | undefined) {
+    if (!topic.isRatedDown && topic.isRatedUp) {
+      this.decrease(topic, topics);
+      this.decrease(topic, topics);
+      topic.isRatedDown = true;
+      topic.isRatedUp = false;
+
+      return;
     }
+
+    if (!topic.isRatedDown) {
+      this.decrease(topic, topics);
+      topic.isRatedDown = true;
+      return;
+    }
+
+    this.increase(topic, topics);
+    topic.isRatedDown = false;
   }
 
   decrease(topic: any, topics: TopicModel[] | undefined) {
@@ -52,25 +73,6 @@ export class TopicHelperService {
           topic.rating--;
         }
       });
-  }
-
-  decreaseRating(topic: any, topics: TopicModel[] | undefined, karma: any = undefined) {
-    if (!topic.isRatedDown) {
-      this.decrease(topic, topics);
-      topic.isRatedDown = true;
-      if (karma !== undefined) {
-        karma--;
-        return karma;
-      }
-      return;
-    }
-
-    this.increase(topic, topics);
-    topic.isRatedDown = false;
-    if (karma !== undefined) {
-      karma++;
-      return karma;
-    }
   }
 
   sortTop(isSorted: boolean, posts: TopicModel[] | undefined, postsCopy: TopicModel[], isMainPage = false, isUserPage = false) {

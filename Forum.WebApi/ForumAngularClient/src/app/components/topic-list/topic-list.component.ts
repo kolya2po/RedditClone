@@ -55,6 +55,7 @@ export class TopicListComponent {
       this.openSnackBar();
       return;
     }
+
     this.topicHelper.increaseRating(topic, this.topics);
   }
 
