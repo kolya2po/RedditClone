@@ -2,7 +2,7 @@
 
 namespace Forum.WebApi.Models.Identity
 {
-    public class LoginModelDto
+    public class LoginDto
     {
         [Required(ErrorMessage = "Please enter email.")]
         [EmailAddress(ErrorMessage = "String should be valid email.")]

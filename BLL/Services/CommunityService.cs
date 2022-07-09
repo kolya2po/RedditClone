@@ -153,7 +153,7 @@ namespace Business.Services
 
         /// <inheritdoc />
         /// <exception cref="ForumException">Throws if user doesn't exist.</exception>
-        ///  /// <exception cref="ForumException">Throws if user already moderates community.</exception>
+        /// <exception cref="ForumException">Throws if user already moderates community.</exception>
         public async Task AddModeratorAsync(int userId, int communityId)
         {
             var user = await _userManager.FindByIdAsync(userId.ToString());

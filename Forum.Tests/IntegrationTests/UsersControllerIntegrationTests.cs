@@ -1,8 +1,12 @@
 ﻿using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using Business.MapModels;
+using Business.MapModels.Identity;
 using FluentAssertions;
+using Forum.WebApi.Models.Identity;
 using Newtonsoft.Json;
 using NUnit.Framework;
 
@@ -42,6 +46,99 @@ namespace Forum.Tests.IntegrationTests
 
             actual.PostModels.Should().BeEquivalentTo(expected.PostModels, opt =>
                 opt.Excluding(c => c.CommentModels));
+        }
+
+
+        [Test]
+        public async Task Registration_RegistersNewUser()
+        {
+            // Arrange
+            var registrationDto = new RegistrationDto
+            {
+                Email = "user1@email.com",
+                UserName = "user1",
+                Password = "password"
+            };
+
+            // Act
+            var httpResponse = await RegisterUser(registrationDto);
+
+            // Assert
+            httpResponse.EnsureSuccessStatusCode();
+            var stringResponse = await httpResponse.Content.ReadAsStringAsync();
+            var userDto = JsonConvert.DeserializeObject<UserDto>(stringResponse);
+            userDto.Id.Should().NotBe(0);
+            userDto.Token.Should().NotBeNull();
+        }
+
+        [Test]
+        public async Task Login_LoginsUser()
+        {
+            // Arrange
+            var loginDto = new LoginDto
+            {
+                Email = "user1@email.com",
+                Password = "password"
+            };
+            var content = new StringContent(JsonConvert.SerializeObject(loginDto), Encoding.UTF8, "application/json");
+
+            var registrationDto = new RegistrationDto
+            {
+                Email = "user1@email.com",
+                UserName = "user1",
+                Password = "password"
+            };
+            await RegisterUser(registrationDto);
+
+            // Act
+            var httpResponse = await _httpClient.PostAsync(RequestUri + "login", content);
+
+            // Assert
+            httpResponse.EnsureSuccessStatusCode();
+            var stringResponse = await httpResponse.Content.ReadAsStringAsync();
+            var userDto = JsonConvert.DeserializeObject<UserDto>(stringResponse);
+            userDto.Id.Should().NotBe(0);
+            userDto.Token.Should().NotBeNull();
+        }
+
+        [Test]
+        public async Task Update_UpdatesUser()
+        {
+            // Arrange
+            var registrationDto = new RegistrationDto
+            {
+                Email = "user1@email.com",
+                UserName = "user1",
+                Password = "password"
+            };
+            var response = await (await RegisterUser(registrationDto)).Content.ReadAsStringAsync();
+            var userDto = JsonConvert.DeserializeObject<UserDto>(response);
+
+            var updateUserDto = new UpdateUserDto
+            {
+                Id = userDto.Id,
+                UserName = "newUser2"
+            };
+
+            var content = new StringContent(JsonConvert.SerializeObject(updateUserDto), Encoding.UTF8, "application/json");
+
+            // Act
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", userDto.Token);
+            var httpResponse = await _httpClient.PutAsync(RequestUri, content);
+
+            // Assert
+            httpResponse.EnsureSuccessStatusCode();
+
+            var stringResponse = await (await _httpClient.GetAsync(RequestUri + $"{userDto.Id}")).Content.ReadAsStringAsync();
+            var user = JsonConvert.DeserializeObject<UserModel>(stringResponse);
+            user.UserName.Should().BeEquivalentTo(updateUserDto.UserName);
+        }
+
+        private async Task<HttpResponseMessage>  RegisterUser(RegistrationDto registrationDto)
+        {
+            var content = new StringContent(JsonConvert.SerializeObject(registrationDto), Encoding.UTF8, "application/json");
+            return await _httpClient.PostAsync(RequestUri + "registration", content);
         }
 
         private static UserModel GetTestUserModel =>

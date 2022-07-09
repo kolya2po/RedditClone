@@ -29,8 +29,8 @@ namespace Forum.WebApi.Models
             CreateMap<CreateTopicDto, TopicModel>().ReverseMap();
             CreateMap<UpdateTopicDto, TopicModel>().ReverseMap();
 
-            CreateMap<LoginModelDto, LoginModel>().ReverseMap();
-            CreateMap<RegistrationModelDto, RegistrationModel>().ReverseMap();
+            CreateMap<LoginDto, LoginModel>().ReverseMap();
+            CreateMap<RegistrationDto, RegistrationModel>().ReverseMap();
             CreateMap<UpdateUserDto, UserModel>().ReverseMap();
         }
     }

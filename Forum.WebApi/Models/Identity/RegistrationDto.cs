@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Forum.WebApi.Models.Identity
 {
-    public class RegistrationModelDto
+    public class RegistrationDto
     {
         [Required(ErrorMessage = "Please enter email.")]
         [EmailAddress(ErrorMessage = "String should be valid email.")]

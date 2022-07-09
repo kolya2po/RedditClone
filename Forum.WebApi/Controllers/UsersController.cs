@@ -4,6 +4,7 @@ using Business.Interfaces;
 using Business.MapModels;
 using Business.MapModels.Identity;
 using Forum.WebApi.Models.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Forum.WebApi.Controllers
@@ -47,7 +48,7 @@ namespace Forum.WebApi.Controllers
         /// for creating of the new user.</param>
         /// <returns>Model of created user.</returns>
         [HttpPost("registration")]
-        public async Task<UserDto> Registration(RegistrationModelDto model)
+        public async Task<UserDto> Registration(RegistrationDto model)
         {
             return await _userService.RegistrationAsync(Mapper.Map<RegistrationModel>(model));
         }
@@ -60,7 +61,7 @@ namespace Forum.WebApi.Controllers
         /// for letting user in the system.</param>
         /// <returns></returns>
         [HttpPost("login")]
-        public async Task<UserDto> Login(LoginModelDto model)
+        public async Task<UserDto> Login(LoginDto model)
         {
             return await _userService.LoginAsync(Mapper.Map<LoginModel>(model));
         }
@@ -71,6 +72,7 @@ namespace Forum.WebApi.Controllers
         /// </summary>
         /// <returns>Task.</returns>
         [HttpGet]
+        [Authorize]
         public async Task Logout()
         {
             await _userService.LogoutAsync();
@@ -84,6 +86,7 @@ namespace Forum.WebApi.Controllers
         /// for updating of the user.</param>
         /// <returns>Task.</returns>
         [HttpPut]
+        [Authorize]
         public async Task Update(UpdateUserDto model)
         {
             await _userService.UpdateAsync(Mapper.Map<UserModel>(model));
