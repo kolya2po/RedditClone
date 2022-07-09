@@ -6,7 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
+using Business.MapModels.Identity;
+using Forum.WebApi.Models.Community;
+using Forum.WebApi.Models.Identity;
 
 namespace Forum.Tests.IntegrationTests
 {
@@ -68,6 +73,93 @@ namespace Forum.Tests.IntegrationTests
             actual.ModeratorModels.Should().BeEquivalentTo(expected.ModeratorModels, opt =>
                 opt.Excluding(m => m.CommentModels)
                     .Excluding(m => m.PostModels));
+        }
+
+        [Test]
+        public async Task Add_AddsNewCommunityToDb()
+        {
+            // Arrange
+            var userId = await AddAuthorizationHeaderToHttpClientAndGetUserIdAsync();
+            var createCommunityDto = new CreateCommunityDto
+            {
+                CreatorId = userId,
+                Title = "New Community",
+                About = "About"
+            };
+
+            var content = new StringContent(JsonConvert.SerializeObject(createCommunityDto), Encoding.UTF8,
+                "application/json");
+
+            // Act
+            var httpResponse = await _httpClient.PostAsync(RequestUri, content);
+
+            // Assert
+            httpResponse.EnsureSuccessStatusCode();
+
+            var stringResponse = await httpResponse.Content.ReadAsStringAsync();
+            var community = JsonConvert.DeserializeObject<CommunityModel>(stringResponse);
+
+            community.CreatorId.Should().Be(createCommunityDto.CreatorId);
+            community.Title.Should().BeEquivalentTo(createCommunityDto.Title);
+            community.About.Should().BeEquivalentTo(createCommunityDto.About);
+        }
+
+        [Test]
+        public async Task Join_AddsUserToCommunityMembers()
+        {
+            // Arrange
+            var userId = await AddAuthorizationHeaderToHttpClientAndGetUserIdAsync();
+            var communityId = 3;
+
+            // Act
+            var httpResponse =
+                await _httpClient.PostAsync(RequestUri + $"join?userId={userId}&communityId={communityId}", null);
+
+            // Assert
+            httpResponse.EnsureSuccessStatusCode();
+            var user = JsonConvert.DeserializeObject<UserModel>(await (await _httpClient.GetAsync($"api/Users/{userId}")).Content.ReadAsStringAsync());
+
+            user.CommunitiesIds.Contains(communityId).Should().BeTrue();
+        }
+
+        [Test]
+        public async Task Leave_RemovesUserFromCommunityMembers()
+        {
+            // Arrange
+            await AddAuthorizationHeaderToHttpClientAndGetUserIdAsync();
+            var userId = 4;
+            var communityId = 2;
+
+            // Act
+            var httpResponse =
+                await _httpClient.DeleteAsync(RequestUri + $"leave?userId={userId}&communityId={communityId}");
+
+            // Assert
+            httpResponse.EnsureSuccessStatusCode();
+            var user = JsonConvert.DeserializeObject<UserModel>(await (await _httpClient.GetAsync($"api/Users/{userId}")).Content.ReadAsStringAsync());
+
+            user.CommunitiesIds.Contains(communityId).Should().BeFalse();
+        }
+
+
+        private async Task<int> AddAuthorizationHeaderToHttpClientAndGetUserIdAsync()
+        {
+            var registrationDto = new RegistrationDto
+            {
+                Email = "user1@email.com",
+                UserName = "user1",
+                Password = "password"
+            };
+
+            var content = new StringContent(JsonConvert.SerializeObject(registrationDto), Encoding.UTF8, "application/json");
+            var httpResponse = await _httpClient.PostAsync("api/users/registration", content);
+            var stringResponse = await httpResponse.Content.ReadAsStringAsync();
+            var userDto = JsonConvert.DeserializeObject<UserDto>(stringResponse);
+
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", userDto.Token);
+
+            return userDto.Id;
         }
 
         private static IEnumerable<CommunityModel> GetTestCommunityModels =>

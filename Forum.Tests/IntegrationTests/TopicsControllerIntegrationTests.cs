@@ -105,26 +105,6 @@ namespace Forum.Tests.IntegrationTests
             createdTopic.Title.Should().BeEquivalentTo(createTopicDto.Title);
         }
 
-        private async Task<int> AddAuthorizationHeaderToHttpClientAndGetUserIdAsync()
-        {
-            var registrationDto = new RegistrationDto
-            {
-                Email = "user1@email.com",
-                UserName = "user1",
-                Password = "password"
-            };
-
-            var content = new StringContent(JsonConvert.SerializeObject(registrationDto), Encoding.UTF8, "application/json");
-            var httpResponse = await _httpClient.PostAsync("api/users/registration", content);
-            var stringResponse = await httpResponse.Content.ReadAsStringAsync();
-            var userDto = JsonConvert.DeserializeObject<UserDto>(stringResponse);
-
-            _httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", userDto.Token);
-
-            return userDto.Id;
-        }
-
         [Test]
         public async Task Update_UpdatesTopic()
         {
@@ -207,6 +187,27 @@ namespace Forum.Tests.IntegrationTests
 
             newTopic.Rating.Should().BeLessThan(oldTopic.Rating);
         }
+
+        private async Task<int> AddAuthorizationHeaderToHttpClientAndGetUserIdAsync()
+        {
+            var registrationDto = new RegistrationDto
+            {
+                Email = "user1@email.com",
+                UserName = "user1",
+                Password = "password"
+            };
+
+            var content = new StringContent(JsonConvert.SerializeObject(registrationDto), Encoding.UTF8, "application/json");
+            var httpResponse = await _httpClient.PostAsync("api/users/registration", content);
+            var stringResponse = await httpResponse.Content.ReadAsStringAsync();
+            var userDto = JsonConvert.DeserializeObject<UserDto>(stringResponse);
+
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", userDto.Token);
+
+            return userDto.Id;
+        }
+
         private static TopicModel GetTestTopicModel => new TopicModel
         {
 
