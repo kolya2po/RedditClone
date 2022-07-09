@@ -1,9 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using Business.MapModels;
+using Business.MapModels.Identity;
 using FluentAssertions;
+using Forum.WebApi.Models.Identity;
+using Forum.WebApi.Models.Topic;
 using Newtonsoft.Json;
 using NUnit.Framework;
 
@@ -68,6 +74,139 @@ namespace Forum.Tests.IntegrationTests
             });
         }
 
+        [Test]
+        public async Task Add_AddsNewTopicToDb()
+        {
+            // Arrange
+            var userId = await AddAuthorizationHeaderToHttpClientAndGetUserIdAsync();
+
+            var createTopicDto = new CreateTopicDto
+            {
+                AuthorId = userId,
+                CommunityId = 1,
+                Text = "new topic text",
+                Title = "new topic"
+            };
+
+            var content = new StringContent(JsonConvert.SerializeObject(createTopicDto), Encoding.UTF8, "application/json");
+
+            // Act
+            var httpResponse = await _httpClient.PostAsync(RequestUri, content);
+
+            // Assert
+            httpResponse.EnsureSuccessStatusCode();
+
+            var stringResponse = await httpResponse.Content.ReadAsStringAsync();
+            var createdTopic = JsonConvert.DeserializeObject<TopicModel>(stringResponse);
+
+            createdTopic.AuthorId.Should().Be(createTopicDto.AuthorId);
+            createdTopic.CommunityId.Should().Be(createTopicDto.CommunityId);
+            createdTopic.Text.Should().BeEquivalentTo(createTopicDto.Text);
+            createdTopic.Title.Should().BeEquivalentTo(createTopicDto.Title);
+        }
+
+        private async Task<int> AddAuthorizationHeaderToHttpClientAndGetUserIdAsync()
+        {
+            var registrationDto = new RegistrationDto
+            {
+                Email = "user1@email.com",
+                UserName = "user1",
+                Password = "password"
+            };
+
+            var content = new StringContent(JsonConvert.SerializeObject(registrationDto), Encoding.UTF8, "application/json");
+            var httpResponse = await _httpClient.PostAsync("api/users/registration", content);
+            var stringResponse = await httpResponse.Content.ReadAsStringAsync();
+            var userDto = JsonConvert.DeserializeObject<UserDto>(stringResponse);
+
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", userDto.Token);
+
+            return userDto.Id;
+        }
+
+        [Test]
+        public async Task Update_UpdatesTopic()
+        {
+            // Arrange
+            await AddAuthorizationHeaderToHttpClientAndGetUserIdAsync();
+
+            var updateTopicDto = new UpdateTopicDto
+            {
+                AuthorId = 1,
+                CommunityId = 1,
+                Id = 1,
+                Title = "new Topic 1",
+                PostingDate = new DateTime(2022, 1, 22).ToLongTimeString(),
+                Rating = 0
+            };
+
+            var content = new StringContent(JsonConvert.SerializeObject(updateTopicDto), Encoding.UTF8, "application/json");
+
+            // Act
+            var httpResponse = await _httpClient.PutAsync(RequestUri, content);
+
+            // Assert
+            httpResponse.EnsureSuccessStatusCode();
+
+            var response = await _httpClient.GetAsync(RequestUri + $"{updateTopicDto.Id}");
+            var stringResponse = await response.Content.ReadAsStringAsync();
+            var topic = JsonConvert.DeserializeObject<TopicModel>(stringResponse);
+
+            topic.Title.Should().BeEquivalentTo(updateTopicDto.Title);
+        }
+
+        [Test]
+        public async Task Delete_DeletesTopic()
+        {
+            // Arrange
+            await AddAuthorizationHeaderToHttpClientAndGetUserIdAsync();
+            var topicId = 1;
+            var initialCount = JsonConvert.DeserializeObject<IEnumerable<TopicModel>>(await (await _httpClient.GetAsync(RequestUri)).Content.ReadAsStringAsync()).Count();
+
+            // Act
+            var httpResponse = await _httpClient.DeleteAsync(RequestUri + $"{topicId}");
+
+            // Assert
+            httpResponse.EnsureSuccessStatusCode();
+            var newCount = JsonConvert.DeserializeObject<IEnumerable<TopicModel>>(await (await _httpClient.GetAsync(RequestUri)).Content.ReadAsStringAsync()).Count();
+
+            initialCount.Should().NotBe(newCount);
+        }
+
+        [Test]
+        public async Task IncreaseRating_IncreasesTopicsRating()
+        {
+            // Arrange
+            await AddAuthorizationHeaderToHttpClientAndGetUserIdAsync();
+            var oldTopic = JsonConvert.DeserializeObject<TopicModel>(await (await _httpClient.GetAsync(RequestUri + "1")).Content.ReadAsStringAsync());
+
+            // Act
+            var httpResponse = await _httpClient.PutAsync(RequestUri + "1/increase-rating", null);
+
+            // Assert
+            httpResponse.EnsureSuccessStatusCode();
+            var newTopic = JsonConvert.DeserializeObject<TopicModel>(await (await _httpClient.GetAsync(RequestUri + "1")).Content.ReadAsStringAsync());
+
+            newTopic.Rating.Should().BeGreaterThan(oldTopic.Rating);
+        }
+
+        [Test]
+        public async Task DecreaseRating_DecreasesTopicsRating()
+        {
+            // Arrange
+            await AddAuthorizationHeaderToHttpClientAndGetUserIdAsync();
+            var oldTopic = JsonConvert.DeserializeObject<TopicModel>(await (await _httpClient.GetAsync(RequestUri + "1")).Content.ReadAsStringAsync());
+
+            // Act
+            var httpResponse = await _httpClient.PutAsync(RequestUri + "1/decrease-rating", null);
+
+            // Assert
+            httpResponse.EnsureSuccessStatusCode();
+            var newTopic = JsonConvert.DeserializeObject<TopicModel>(await (await _httpClient.GetAsync(RequestUri + "1")).Content.ReadAsStringAsync());
+
+            newTopic.Rating.Should().BeLessThan(oldTopic.Rating);
+        }
         private static TopicModel GetTestTopicModel => new TopicModel
         {
 
