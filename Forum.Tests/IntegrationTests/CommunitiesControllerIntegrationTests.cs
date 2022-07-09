@@ -141,7 +141,6 @@ namespace Forum.Tests.IntegrationTests
             user.CommunitiesIds.Contains(communityId).Should().BeFalse();
         }
 
-
         private async Task<int> AddAuthorizationHeaderToHttpClientAndGetUserIdAsync()
         {
             var registrationDto = new RegistrationDto
