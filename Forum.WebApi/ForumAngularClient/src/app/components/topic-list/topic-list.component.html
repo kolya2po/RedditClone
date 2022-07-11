@@ -17,7 +17,7 @@
       <p>Top</p>
     </div>
   </div>
-  <div class="topic" *ngFor="let t of topics">
+  <div class="topic" *ngFor="let t of topics | topicsFilter:search">
     <div class="rating">
       <a (click)="increase(t)"><span class="material-icons">keyboard_arrow_up</span></a>
       <p>{{t.rating}}</p>

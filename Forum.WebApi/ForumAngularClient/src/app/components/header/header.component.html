@@ -1,5 +1,8 @@
 <div class="header">
   <a routerLink="/" class="logo">{{title}}</a>
+  <div class="search">
+    <input type="text" [(ngModel)]="search">
+  </div>
   <div class="header-right">
     <a routerLink="/login" *ngIf="us.user.id === 0">Login</a>
     <a routerLink="/registration" *ngIf="us.user.id === 0">Registration</a>

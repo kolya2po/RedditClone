@@ -14,5 +14,4 @@ export class UsersFilterPipe implements PipeTransform{
       return u?.userName?.toLowerCase().indexOf(search.toLowerCase()) !== -1;
     })
   }
-
 }

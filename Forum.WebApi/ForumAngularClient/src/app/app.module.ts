@@ -30,6 +30,7 @@ import { UpdateTopicPageComponent } from './components/update-topic-page/update-
 import {UserProfileComponent} from "./components/user-profile/user-profile.component";
 import { TopicListComponent } from './components/topic-list/topic-list.component';
 import {CommunitiesPageComponent} from "./components/communities-page/communities-page.component";
+import {TopicsFilterPipe} from "./components/topic-list/topics-filter.pipe";
 
 @NgModule({
   declarations: [
@@ -50,7 +51,8 @@ import {CommunitiesPageComponent} from "./components/communities-page/communitie
     ControlCommunityPageComponent,
     UpdateTopicPageComponent,
     UserProfileComponent,
-    TopicListComponent
+    TopicListComponent,
+    TopicsFilterPipe
   ],
   imports: [
     BrowserModule,

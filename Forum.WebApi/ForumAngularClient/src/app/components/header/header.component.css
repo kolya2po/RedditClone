@@ -9,14 +9,14 @@
 }
 .header .search {
   width: 30%;
-  margin: 0 auto;
+  margin-right: 10%;
 }
 
 .header .search input {
   width: 100%;
   border: none;
   border-radius: 4px;
-  padding: 10px 0;
+  padding: 10px 5px;
   font-size: 16px;
 }
 

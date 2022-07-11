@@ -8,6 +8,7 @@ import {CommunityService} from "../../services/community.service";
 import {TopicService} from "../../services/topic.service";
 import {CommunityModel} from "../../models/community/community.model";
 import {UserModel} from "../../models/user/user.model";
+import {SearchService} from "../../services/search.service";
 
 @Component({
   selector: 'app-topic-list',
@@ -22,15 +23,18 @@ export class TopicListComponent {
   @Input() user: UserModel = new UserModel();
   topicsCopy: TopicModel[] = [];
   isSorted = false;
+  search = '';
 
   constructor(public us: UserService, public router: Router,
               private topicHelper: TopicHelperService,
               private _snackBar: MatSnackBar,
               private cs: CommunityService,
-              private ts: TopicService) { }
+              private ts: TopicService,
+              private ss: SearchService) { }
 
   ngOnChanges(): void {
     this.topicsCopy = [...this.topics];
+    this.ss.currentSearch.subscribe(s => this.search = s);
   }
 
   join(communityId: any) {
